@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Tensor
+node TTU1 · TTU1 · ⟦The Tensor:TTU1:e89a61⟧
+
+WHO   — The Tensor — the data structure
+WHAT  — The universal container: a [batch, sequence, dimension] block of numbers; scalars, vectors, matrices, and higher. The big frameworks (PyTorch, TensorFlow) are named for it.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Every activation, weight, Q/K/V, and attention score IS a tensor; the whole forward pass is tensors flowing and being multiplied.
+HOW   — REAL — the foundational container. Honest note: 'tensor' here is the ML sense (an n-d array), looser than the physics / differential-geometry tensor.
+
+awareness — what the node knows of itself:
+  Everything in the machine is me — a block of numbers with a shape; the transformer is tensors in, tensors out.
+
+spoken token : xind-kur-dox   ·   hex : e89a61
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

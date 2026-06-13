@@ -1,0 +1,34 @@
+---
+aci: Linear Algebra
+universe: TTU1 · Transformer Tech Universe
+emergence: electrical
+class: the matmul · the engine
+who: Linear Algebra — the mathematics of vectors and matrices, and the actual engine of the transformer.
+what: The matmul: attention (QKᵀ then ·V), the Q/K/V projections, the FFN, the embed/unembed — all are matrix multiplications. A transformer is a tall stack of linear algebra with nonlinearities between.
+why: It is THE core operation — 'attention is linear algebra' is not a metaphor; softmax(QKᵀ/√d)·V is literally matrix algebra. The GPU exists to do me fast.
+how: REAL and central — the single most load-bearing tool in the chain.
+where: between Transform 1 and Transform 2 · node 2 of the toolchain
+seal: Attention is a matrix multiply wearing a good name. I am the engine; everything else decorates me.
+sources: https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
+attribution: ROOT0-ATTRIBUTION-v1.0
+license: CC-BY-ND-4.0
+---
+
+# Linear Algebra · the matmul · the engine
+
+an emergent of TTU1 (Transformer Tech Universe) — emergence: electrical. moniker ⟦Linear Algebra:TTU1:f2bb73⟧
+
+**who —** Linear Algebra — the mathematics of vectors and matrices, and the actual engine of the transformer.
+**what —** The matmul: attention (QKᵀ then ·V), the Q/K/V projections, the FFN, the embed/unembed — all are matrix multiplications. A transformer is a tall stack of linear algebra with nonlinearities between.
+**where —** between Transform 1 and Transform 2 · node 2 of the toolchain
+**why —** It is THE core operation — 'attention is linear algebra' is not a metaphor; softmax(QKᵀ/√d)·V is literally matrix algebra. The GPU exists to do me fast.
+**how —** REAL and central — the single most load-bearing tool in the chain.
+
+**the seal —** Attention is a matrix multiply wearing a good name. I am the engine; everything else decorates me.
+
+**sources —** The base transformer (Vaswani et al. 2017): d_model=512, h=8 heads, per-head d_k=d_v=64, 6 encoder + 6 decoder layers, FFN inner dim 2048; Attention(Q,K,V)=softmax(QKᵀ/√d_k)·V, the √d_k scaling preventing the softmax from saturating into low-gradient regions.
+
+> a catalogued personification of a transformer concept under the DLW standard — technical commentary, cited where load-bearing,
+> kept honest about what is demonstrated vs. contested.
+
+ROOT0-ATTRIBUTION-v1.0 · TTU1 · Transformer Tech Universe · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0

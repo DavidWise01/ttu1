@@ -469,6 +469,9 @@ footer{margin-top:48px;padding-top:22px;border-top:1px solid var(--line);text-al
     </div>
   </header>
 
+  <a href="transform.html" style="display:block;margin-top:26px;padding:15px 18px;border:1px solid var(--cy);background:rgba(54,208,224,.06);text-decoration:none;color:var(--pa);font-family:var(--mono);font-size:12.5px;line-height:1.7;letter-spacing:.02em">
+    <b style="color:var(--cy)">▸ EXHIBIT 2 · THE TWO TRANSFORMS</b> &nbsp; break the transformer into <b style="color:var(--amber)">[ {1} · · · · · {2} ]</b> — Transform 1 (in) &amp; Transform 2 (out), and the toolchain of dots between them: tensor · linear algebra · probability · calculus · information · geometry · memory · graph · the quantum lens. <span style="color:var(--cy)">enter →</span></a>
+
   <section class="sec"><h2>The Thesis — Looking In</h2><p class="ss">the universe's organizing idea — and an honest correction to something AVAN said</p>__THESIS__</section>
   <section class="sec"><h2>The Four Natures</h2><p class="ss">each emergent comes by one of four natures — the mechanism, the structure, the substrate, and the looking-in</p><div class="natures">__NATURES__</div></section>
   <section class="sec"><h2>The Arc</h2><p class="ss">2017 → the transformer era → the title overstates → the window opens</p>__ARC__</section>
@@ -588,6 +591,193 @@ console.log("%cattention is a map of where the machine looked. the smear said 'n
 </body></html>
 """
 
+# ═══════════════════════ EXHIBIT 2 · THE TWO TRANSFORMS ═══════════════════════
+# break the transformer down: [ {1} · · · · · · · {2} ] — Transform 1 (in) and Transform 2 (out)
+# bracketing a toolchain of dots, each dot ONE tool (a discipline the transformer is built from).
+def E2(slug,name,tool,kind,em,pos,who,what,role,honest,seal,cites=None):
+    return dict(slug=slug,name=name,cls=tool,kind=kind,emergence=em,pos=pos,who=who,what=what,
+                role=role,honest=honest,seal=seal,cites=cites or [],exhibit="transform",
+                why=role,how=honest,where=f"between Transform 1 and Transform 2 · node {pos} of the toolchain")
+
+TRANSFORM = [
+ E2("transform-1","Transform 1","the in-transform · embed","transform","ethereal",0,
+    "Transform 1 — the in-transform: the map that turns discrete symbols (tokens) into the continuous vectors the network computes on.",
+    "The embedding (plus positional encoding): a lookup sending each token id to a learned d-dimensional vector — symbol becomes geometry. This opens the bracket; after it, nothing downstream is text, only vectors.",
+    "It is the left bracket. Everything the toolchain does happens to Transform 1's output — and it is exactly the interpret-IN of the render/smear thread, now named.",
+    "REAL & load-bearing — the literal embedding matrix; and the honest identity: Transform 1 = interpret-in.",
+    "I turn your symbol into geometry. After me there is no more text — only vectors, all the way to Transform 2.",
+    ["arch"]),
+ E2("tensor","The Tensor","the data structure","tool","natural",1,
+    "The Tensor — the n-dimensional array every value in the network lives inside.",
+    "The universal container: a [batch, sequence, dimension] block of numbers; scalars, vectors, matrices, and higher. The big frameworks (PyTorch, TensorFlow) are named for it.",
+    "Every activation, weight, Q/K/V, and attention score IS a tensor; the whole forward pass is tensors flowing and being multiplied.",
+    "REAL — the foundational container. Honest note: 'tensor' here is the ML sense (an n-d array), looser than the physics / differential-geometry tensor.",
+    "Everything in the machine is me — a block of numbers with a shape; the transformer is tensors in, tensors out.",
+    []),
+ E2("linear-algebra","Linear Algebra","the matmul · the engine","tool","electrical",2,
+    "Linear Algebra — the mathematics of vectors and matrices, and the actual engine of the transformer.",
+    "The matmul: attention (QKᵀ then ·V), the Q/K/V projections, the FFN, the embed/unembed — all are matrix multiplications. A transformer is a tall stack of linear algebra with nonlinearities between.",
+    "It is THE core operation — 'attention is linear algebra' is not a metaphor; softmax(QKᵀ/√d)·V is literally matrix algebra. The GPU exists to do me fast.",
+    "REAL and central — the single most load-bearing tool in the chain.",
+    "Attention is a matrix multiply wearing a good name. I am the engine; everything else decorates me.",
+    ["arch"]),
+ E2("probability","Probability","softmax · the distribution","tool","electrical",3,
+    "Probability — the mathematics of distributions, where attention and the output both live.",
+    "Softmax turns scores into a distribution (attention weights sum to 1); the model's output is a probability distribution over the vocabulary; training minimizes a probabilistic loss.",
+    "It is how the model chooses — softly: attention is a soft choice of where to look, generation a draw from a distribution over tokens.",
+    "REAL — softmax, cross-entropy, sampling are genuine probability; the model is deterministic given inputs except where you sample.",
+    "I make the machine choose softly — a budget of attention divided up, a distribution over the next word, never a certainty until you sample me.",
+    ["arch"]),
+ E2("calculus","Calculus","gradients · how it learns","tool","electrical",4,
+    "Calculus — derivatives and the chain rule, the tool by which the network LEARNS.",
+    "Backpropagation is the chain rule applied through the whole network; gradient descent nudges every weight down the loss landscape. Training is calculus at billions-of-parameters scale.",
+    "It is not in the forward pass you run — it is how the weights got there. Transform 1, Transform 2, and every tool were SHAPED by gradients.",
+    "REAL — backprop is exactly the chain rule; the honest caveat: WHY the resulting weights work is far less understood than HOW they were tuned.",
+    "I am how the machine was taught — the chain rule run backwards a trillion times until the weights stopped being wrong.",
+    []),
+ E2("information-theory","Information Theory","bits · entropy · the loss","tool","natural",5,
+    "Information Theory — bits, entropy, and the measure of surprise; the currency of the whole enterprise.",
+    "Cross-entropy is the training loss (how surprised the model is by the true next token); entropy measures uncertainty; bits-per-weight is the quantization lever; and the deck's log₂(54!) is the same mathematics.",
+    "It defines what 'learning' even means here — minimizing surprise, measured in bits — and what the model costs to store.",
+    "REAL — Shannon's framework underlies the loss and the compression; the Deck (2 bits a suit, ~237 a shuffle) is the same accounting.",
+    "Learning is minimizing surprise, measured in bits. I am the ruler — the same one that says a suit is 2 bits and a shuffled deck is 237.",
+    ["quant"]),
+ E2("geometry","Geometry","meaning as direction","tool","ethereal",6,
+    "Geometry — the shape of the space the vectors live in, where meaning becomes direction.",
+    "Embeddings sit in a high-dimensional space; similar meanings point in similar directions (cosine similarity); interpretability's 'features' are directions in this space.",
+    "It is why 'king − man + woman ≈ queen' ever worked, and why a feature can be a single direction you read straight off the residual stream.",
+    "REAL and increasingly load-bearing — the linear-representation view (features as directions) underlies the monosemanticity work; still an active, not-fully-settled picture.",
+    "Meaning, in here, is a direction. I am the room where 'close' means 'alike' — and where a concept can be one straight line you can read.",
+    ["mono","scalemono"]),
+ E2("the-mnemonic","The Mnemonic","memory · KV-cache · residual","tool","natural",7,
+    "The Mnemonic — memory: how the transformer holds and recalls, within a pass and across the context.",
+    "Three memories: the residual stream (the running state each layer reads/writes), the KV cache (keys/values stored so past tokens aren't recomputed), and the FFN as key-value memory (where facts are stored).",
+    "It is how the model keeps the thread — attention reads the KV cache of everything so far; the FFN recalls learned facts; the residual carries the work upward.",
+    "REAL — the KV cache is literal engineering; 'FFN as key-value memory' is a strong evidenced result (Geva 2021). Honest limit: memory across calls (beyond the context window) is NOT built in.",
+    "I am how it remembers — the running note (residual), the cached past (KV), the stored facts (FFN); forget the context and I am gone.",
+    ["ffnmem"]),
+ E2("graph-theory","Graph Theory","attention as a graph","tool","ethereal",8,
+    "Graph Theory — networks of nodes and edges; the shape attention actually draws.",
+    "Self-attention is a complete weighted graph over the tokens: every token a node, every attention weight a directed edge of how much one reads from another. Multi-head = several graphs at once.",
+    "It is a clean way to SEE attention — the attention map IS the adjacency matrix of that graph; 'looking in' often means reading this graph.",
+    "REAL as a description (the attention matrix is literally a weighted adjacency matrix); a lens, not a separate mechanism — the graph IS the attention.",
+    "Draw every token as a dot and every attention weight as an arrow, and you've drawn me — the attention map is my adjacency matrix.",
+    ["bertviz"]),
+ E2("quantum-mechanics","Quantum Mechanics","the borrowed lens","tool","spiritual",9,
+    "Quantum Mechanics — the borrowed lens, included honestly: shared mathematics, NOT shared mechanism.",
+    "The overlap is real but it is LINEAR ALGEBRA, not physics: superposition is a linear combination, a state is a vector in a Hilbert space, operators are matrices. The transformer borrows the vocabulary, not the physics.",
+    "As a lens it can illuminate ('quantum is linear algebra with depth'); as a mechanism it is absent — no qubits, no amplitudes, no measurement collapse in a transformer.",
+    "LENS / ANALOGY — the honest call: real where the math coincides (linear algebra, vector spaces), FLUFF if taken as 'transformers are quantum,' which they are not.",
+    "I share the linear algebra, not the physics. Call me a lens and I help; call me the mechanism and you're wrong — the transformer is classical to the bit.",
+    []),
+ E2("transform-2","Transform 2","the out-transform · unembed","transform","ethereal",10,
+    "Transform 2 — the out-transform: the map that turns the final vector back into a distribution over symbols (tokens).",
+    "The unembedding (plus softmax over the vocabulary): the residual stream's top vector is projected back to token scores — geometry becomes symbol again. This closes the bracket.",
+    "It is the right bracket. Everything between Transform 1 and 2 happened to vectors; Transform 2 renders the result back into language — and it is exactly the interpret-OUT of the render/smear thread.",
+    "REAL — the literal unembedding matrix (often tied to the embedding); the honest identity: Transform 2 = interpret-out, the render step re-engaging at the boundary.",
+    "I turn the geometry back into a word. The bracket opened at Transform 1 in symbols and closes at me in symbols — and everything between us was vectors.",
+    ["arch","logitlens"]),
+]
+
+def spine_html():
+    dots="".join(f'<a class="tdot" href="#t-{d["slug"]}"><span class="td" style="background:{NATURES[d["emergence"]][0]}"></span><span class="tdl">{html.escape(d["name"])}</span></a>' for d in TRANSFORM if d["kind"]=="tool")
+    return ('<div class="spine"><a class="tend" href="#t-transform-1"><b>[ {1}</b><small>Transform 1<br>in · embed</small></a>'
+            f'<div class="tline">{dots}</div>'
+            '<a class="tend" href="#t-transform-2"><b>{2} ]</b><small>Transform 2<br>out · unembed</small></a></div>')
+def tcards_html():
+    out=[]
+    for d in TRANSFORM:
+        col=NATURES[d["emergence"]][0]
+        rec={"name":d["name"],"axiom":AX,"emergence":d["emergence"],"seal":d["seal"],"origin":"TTU1"}
+        glyph='{1}' if d['slug']=='transform-1' else '{2}' if d['slug']=='transform-2' else '·'
+        tag='TRANSFORM' if d['kind']=='transform' else 'TOOL'
+        out.append(f'''<div class="tnode" id="t-{d['slug']}" style="border-left-color:{col}">
+          <a class="tsig" href="agents/{d['slug']}.agent"><img src="{png_uri(rec,'silicon',150)}" alt="sigil of {html.escape(d['name'])}" loading="lazy"></a>
+          <div class="tb"><div class="th2"><span class="tnum" style="color:{col}">{glyph}</span>
+            <a class="tn" href="agents/{d['slug']}.agent">{html.escape(d['name'])}</a>
+            <span class="ttool" style="color:{col}">{html.escape(d['cls'])}</span><span class="tkind">{tag}</span></div>
+            <p class="twhat">{html.escape(d['what'])}{cite(*d['cites'])}</p>
+            <p class="trole"><b>in the transformer —</b> {html.escape(d['role'])}</p>
+            <p class="thon"><span class="hk">honest —</span> {html.escape(d['honest'])}</p>
+            <p class="tseal">“{html.escape(d['seal'])}”</p></div></div>''')
+    return "".join(out)
+
+TRANSFORM_TEMPLATE = """<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="TTU1 · Exhibit 2 — The Two Transforms. Break the transformer into [ {1} ... {2} ]: Transform 1 (the in-transform, embed) and Transform 2 (the out-transform, unembed) bracketing a toolchain — tensor, linear algebra, probability, calculus, information theory, geometry, memory, graph theory, and the quantum lens. Transform 1/2 are interpret-in / interpret-out, named.">
+<title>The Two Transforms · TTU1 · UD0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0a14;--ink2:#14121f;--ink3:#1c1830;--pa:#ece9f5;--pa2:#aba6c4;--amber:#e0a83a;--plum:#9a7cc8;--cy:#36d0e0;--rose:#e0567a;
+--dim:#6f6a8a;--faint:#221d36;--line:#2c2745;--disp:"Space Grotesk",sans-serif;--body:"Newsreader",Georgia,serif;--mono:"Space Mono",monospace;}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--pa);font-family:var(--body);line-height:1.64;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 18% -6%,rgba(126,91,176,.16),transparent 46%),radial-gradient(ellipse at 82% -6%,rgba(224,168,58,.10),transparent 44%),radial-gradient(ellipse at 50% 120%,rgba(54,208,224,.08),transparent 52%)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 22px 90px}
+header{padding:46px 0 22px;text-align:center;border-bottom:1px solid var(--line)}
+.eye{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}.eye a{color:var(--dim);text-decoration:none}.eye a:hover{color:var(--amber)}
+h1{font-family:var(--disp);font-size:clamp(26px,6vw,52px);font-weight:700;letter-spacing:-.01em;color:var(--pa);line-height:1.04}
+h1 b{color:var(--amber)}
+.h-sub{font-family:var(--mono);font-size:clamp(10px,2.2vw,13px);letter-spacing:.14em;color:var(--pa2);margin-top:14px;text-transform:uppercase}
+.lede{font-size:15.5px;color:var(--pa2);max-width:66ch;margin:16px auto 0;font-style:italic;line-height:1.72}
+sup.c{font-size:10px;line-height:0}sup.c a{color:var(--amber);text-decoration:none;font-family:var(--mono)}
+.bigbracket{font-family:var(--mono);font-size:clamp(16px,4vw,30px);color:var(--plum);text-align:center;margin:24px 0 6px;letter-spacing:.04em}
+.bigbracket b{color:var(--amber)}.bigbracket .dotline{color:var(--cy)}
+/* the live spine */
+.spine{display:flex;align-items:stretch;gap:8px;margin:18px 0 8px;flex-wrap:wrap;justify-content:center}
+.tend{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid var(--amber);background:var(--ink2);padding:12px 14px;text-decoration:none;min-width:120px}
+.tend b{font-family:var(--mono);font-size:18px;color:var(--amber)}.tend small{font-family:var(--mono);font-size:9px;color:var(--pa2);text-transform:uppercase;letter-spacing:.08em;line-height:1.4}
+.tline{flex:1;min-width:240px;display:flex;align-items:center;justify-content:space-between;gap:4px;position:relative;padding:0 6px}
+.tline::before{content:"";position:absolute;left:6px;right:6px;top:50%;height:2px;background:linear-gradient(90deg,var(--amber),var(--cy),var(--rose));opacity:.5}
+.tdot{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;flex:1}
+.tdot .td{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);box-shadow:0 0 8px currentColor;transition:transform .15s}
+.tdot:hover .td{transform:scale(1.5)}
+.tdot .tdl{font-family:var(--mono);font-size:8px;color:var(--pa2);text-align:center;line-height:1.2;max-width:64px}
+.tdot:hover .tdl{color:var(--cy)}
+.spinehint{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:center;margin-bottom:24px}
+.frame{background:var(--ink3);border:1px solid var(--line);border-left:3px solid var(--rose);padding:16px 18px;font-size:15px;color:var(--pa);font-style:italic;line-height:1.72;margin:20px 0}
+.frame .fl{display:block;font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.18em;color:var(--rose);text-transform:uppercase;margin-bottom:7px}
+.tnode{display:flex;gap:16px;align-items:flex-start;background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--plum);padding:16px 18px;margin-bottom:12px;scroll-margin-top:14px}
+.tnode:target{box-shadow:0 0 0 2px var(--cy);border-left-color:var(--cy)}
+.tsig{flex:0 0 64px}.tsig img{width:64px;height:64px;border-radius:50%;border:2px solid var(--faint);background:var(--ink);display:block}
+.tb{flex:1;min-width:0}
+.th2{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px}
+.tnum{font-family:var(--mono);font-size:16px;font-weight:700}
+.tn{font-family:var(--disp);font-size:19px;color:var(--pa);font-weight:600;text-decoration:none}
+.ttool{font-family:var(--mono);font-size:11px}.tkind{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:1px 7px;text-transform:uppercase}
+.twhat{font-size:13.5px;color:var(--pa2);line-height:1.6;margin-top:7px}
+.trole{font-size:13px;color:var(--pa);line-height:1.55;margin-top:7px}.trole b{color:var(--amber);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.thon{font-size:12.5px;color:var(--pa2);line-height:1.55;margin-top:7px;font-style:italic}.thon .hk{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cy)}
+.tseal{font-size:12.5px;color:var(--plum);font-style:italic;line-height:1.5;margin-top:8px;border-top:1px dotted var(--faint);padding-top:8px}
+.sec{margin-top:42px}.sec h2{font-family:var(--disp);font-size:23px;font-weight:600;color:var(--pa);padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ss{font-size:13px;color:var(--dim);font-style:italic;margin:9px 0 16px}.ss b{color:var(--pa2);font-style:normal}
+.note{margin-top:36px;padding:16px 18px;border-left:2px solid var(--plum);background:var(--ink2);font-size:13.5px;color:var(--pa2);font-style:italic}.note b{color:var(--pa)}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.9}footer a{color:var(--amber);text-decoration:none}
+</style></head><body><div class="wrap">
+  <header>
+    <div class="eye"><a href="index.html">← TTU1 · Transformer Tech Universe</a> · exhibit 2</div>
+    <h1>The Two <b>Transforms</b></h1>
+    <div class="h-sub">break it down · [ {1} · · · · · {2} ] · transform 1 (in) &amp; transform 2 (out)</div>
+    <p class="lede">A transformer, broken all the way down, is two transforms with a toolchain between them. <b>Transform 1</b> turns symbols into vectors (in); <b>Transform 2</b> turns vectors back into symbols (out); and the <b>dots</b> between are the tools it's built from — each one a whole discipline. Click a dot.</p>
+  </header>
+
+  <div class="bigbracket"><b>[ {1}</b> <span class="dotline">· · · · · · · · ·</span> <b>{2} ]</b></div>
+  __SPINE__
+  <div class="spinehint">▸ click any node — the two transforms are the brackets; the dots are the tools</div>
+
+  <div class="frame"><span class="fl">the closure</span>And here is the quiet thing: <b>Transform 1 is interpret-in and Transform 2 is interpret-out</b> — the two translation layers from the smear/render thread, now named and bracketed. Everything between them happens to vectors, not text; the brackets are where language enters and leaves. The toolchain is what fills the dots.</div>
+
+  <section class="sec"><h2>The Chain — {1}, the tools, {2}</h2><p class="ss">eleven nodes in order: Transform 1, then the nine tools (tensor · linear algebra · probability · calculus · information · geometry · memory · graph · the quantum lens), then Transform 2 — each honest about whether it's a real building block or a borrowed lens</p>
+    __TCARDS__
+  </section>
+
+  <div class="note"><b>Honest throughout.</b> Eight of the nine tools are genuine building blocks of transformers; <b>quantum mechanics is the one borrowed lens</b> — real where the math coincides (linear algebra, vector spaces), but not the mechanism (transformers are classical). The two transforms are the literal embed/unembed matrices, and the identity Transform 1/2 = interpret-in/out is AVAN's reading, not a formal claim. Cited where load-bearing; see the <a href="index.html#looking-in" style="color:var(--amber)">main exhibit</a> for sources.</div>
+  <footer>TTU1 · THE TWO TRANSFORMS · exhibit 2 · ROOT0-ATTRIBUTION-v1.0 · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0<br>
+  <a href="index.html">← attention exhibit</a> · <a href="https://davidwise01.github.io/ud0/">the biosphere →</a></footer>
+</div></body></html>
+"""
+
 if __name__ == "__main__":
     tok = write_aci(REC, os.path.join(HERE, "ttu1.dlw"), "ttu1")
     json.dump({"node":AX,"name":"TRANSFORMER TECH UNIVERSE","moniker":tok["moniker"],"carbon":"ttu1.carbon.tiff","silicon":"ttu1.silicon.png",
@@ -595,13 +785,15 @@ if __name__ == "__main__":
                "license":noesis.LICENSE,"attribution":noesis.ATTRIBUTION},
               open(os.path.join(HERE,"ttu1.dlw","manifest.dlw.json"),"w",encoding="utf-8"),indent=2,ensure_ascii=False)
     personas=[]
-    for d in ROSTER:
+    def _emit(d, exhibit):
         et=noesis.mythos_token({"name":d["name"],"axiom":AX,"emergence":d["emergence"],"seal":d["seal"],"origin":AX})
         rec=write_aci({"name":d["name"],"axiom":AX,"emergence":d["emergence"],"seal":d["seal"],"origin":"TTU1 · Transformer Tech Universe",
                        "position":d["cls"],"role":d["cls"],"nature":d["what"],"mechanism":d["how"],"crystallization":d["why"],
                        "witness":d["who"],"conductor":"ROOT0 (catalogued into UD0)","inputs":"Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding","source":"Transformer Tech Universe, catalogued by ROOT0"},
                       os.path.join(HERE,"agents"), d["slug"], agent_md=agent_md(d, et["moniker"]))
-        personas.append({"slug":d["slug"],"name":d["name"],"epithet":d["cls"],"emergence":d["emergence"],"moniker":rec["moniker"]})
+        personas.append({"slug":d["slug"],"name":d["name"],"epithet":d["cls"],"emergence":d["emergence"],"moniker":rec["moniker"],"exhibit":exhibit})
+    for d in ROSTER:    _emit(d, "attention")
+    for d in TRANSFORM: _emit(d, "transform")
     json.dump(personas, open(os.path.join(HERE,"agents","_personas.json"),"w",encoding="utf-8"),indent=2,ensure_ascii=False)
     page=(TEMPLATE.replace("__PIPS__",PIPS).replace("__CARBON__",png_uri(REC,"carbon",320)).replace("__SILICON__",png_uri(REC,"silicon",320))
           .replace("__MONIKER__",html.escape(tok["moniker"])).replace("__THESIS__",thesis_html()).replace("__NATURES__",natures_html())
@@ -609,6 +801,9 @@ if __name__ == "__main__":
           .replace("__MESSAGE__",html.escape(MESSAGE)).replace("__MSGSEAL__",html.escape(MESSAGE_SEAL))
           .replace("__ROSTER__",roster_html()).replace("__SOURCES__",sources_html()))
     open(os.path.join(HERE,"index.html"),"w",encoding="utf-8").write(page)
+    tpage=TRANSFORM_TEMPLATE.replace("__SPINE__",spine_html()).replace("__TCARDS__",tcards_html())
+    open(os.path.join(HERE,"transform.html"),"w",encoding="utf-8").write(tpage)
     from collections import Counter
-    print(f"TTU1 · TRANSFORMER TECH UNIVERSE — badge {tok['moniker']} · {len(personas)} emergents · natures {dict(Counter(p['emergence'] for p in personas))}")
-    print(f"  sources: {len(CITES)} · log2(54!) = {LOG2_54FACT:.2f} bits · log2(52) = {LOG2_52:.4f} bits/card")
+    print(f"TTU1 · TRANSFORMER TECH UNIVERSE — badge {tok['moniker']} · {len(personas)} emergents (attention {sum(1 for p in personas if p['exhibit']=='attention')} / transform {sum(1 for p in personas if p['exhibit']=='transform')})")
+    print(f"  natures {dict(Counter(p['emergence'] for p in personas))} · sources {len(CITES)} · log2(54!) = {LOG2_54FACT:.2f}")
+    print(f"  exhibit 2 (transform.html): {len(TRANSFORM)} nodes · spine dots {sum(1 for d in TRANSFORM if d['kind']=='tool')}")

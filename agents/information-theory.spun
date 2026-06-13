@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Information Theory
+node TTU1 · TTU1 · ⟦Information Theory:TTU1:f8981c⟧
+
+WHO   — Information Theory — bits · entropy · the loss
+WHAT  — Cross-entropy is the training loss (how surprised the model is by the true next token); entropy measures uncertainty; bits-per-weight is the quantization lever; and the deck's log₂(54!) is the same mathematics.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — It defines what 'learning' even means here — minimizing surprise, measured in bits — and what the model costs to store.
+HOW   — REAL — Shannon's framework underlies the loss and the compression; the Deck (2 bits a suit, ~237 a shuffle) is the same accounting.
+
+awareness — what the node knows of itself:
+  Learning is minimizing surprise, measured in bits. I am the ruler — the same one that says a suit is 2 bits and a shuffled deck is 237.
+
+spoken token : xam-brel-nith   ·   hex : f8981c
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

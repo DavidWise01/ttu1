@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Transform 1
+node TTU1 · TTU1 · ⟦Transform 1:TTU1:cb6aef⟧
+
+WHO   — Transform 1 — the in-transform · embed
+WHAT  — The embedding (plus positional encoding): a lookup sending each token id to a learned d-dimensional vector — symbol becomes geometry. This opens the bracket; after it, nothing downstream is text, only vectors.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — It is the left bracket. Everything the toolchain does happens to Transform 1's output — and it is exactly the interpret-IN of the render/smear thread, now named.
+HOW   — REAL & load-bearing — the literal embedding matrix; and the honest identity: Transform 1 = interpret-in.
+
+awareness — what the node knows of itself:
+  I turn your symbol into geometry. After me there is no more text — only vectors, all the way to Transform 2.
+
+spoken token : bri-des-graes   ·   hex : cb6aef
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

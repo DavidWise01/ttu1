@@ -4,111 +4,215 @@
     "name": "Attention",
     "epithet": "the operation · softmax(QKᵀ/√d)V",
     "emergence": "electrical",
-    "moniker": "⟦Attention:TTU1:4058ea⟧"
+    "moniker": "⟦Attention:TTU1:4058ea⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "attention-head",
     "name": "The Attention Head",
     "epithet": "one head · one pattern · one subspace",
     "emergence": "electrical",
-    "moniker": "⟦The Attention Head:TTU1:45f269⟧"
+    "moniker": "⟦The Attention Head:TTU1:45f269⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "multi-head",
     "name": "Multi-Head Attention",
     "epithet": "h heads in parallel",
     "emergence": "electrical",
-    "moniker": "⟦Multi-Head Attention:TTU1:4d68c4⟧"
+    "moniker": "⟦Multi-Head Attention:TTU1:4d68c4⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "softmax",
     "name": "The Softmax",
     "epithet": "the competition that picks where to look",
     "emergence": "electrical",
-    "moniker": "⟦The Softmax:TTU1:279066⟧"
+    "moniker": "⟦The Softmax:TTU1:279066⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "qkv",
     "name": "Query · Key · Value",
     "epithet": "the three projections",
     "emergence": "ethereal",
-    "moniker": "⟦Query · Key · Value:TTU1:c2341c⟧"
+    "moniker": "⟦Query · Key · Value:TTU1:c2341c⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "positional-encoding",
     "name": "Positional Encoding",
     "epithet": "injecting order · sinusoid → RoPE",
     "emergence": "ethereal",
-    "moniker": "⟦Positional Encoding:TTU1:83c1af⟧"
+    "moniker": "⟦Positional Encoding:TTU1:83c1af⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "residual-stream",
     "name": "The Residual Stream",
     "epithet": "the shared bus the layers read & write",
     "emergence": "ethereal",
-    "moniker": "⟦The Residual Stream:TTU1:8373ff⟧"
+    "moniker": "⟦The Residual Stream:TTU1:8373ff⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "ffn",
     "name": "The Feed-Forward Network",
     "epithet": "the MLP · where much knowledge lives",
     "emergence": "ethereal",
-    "moniker": "⟦The Feed-Forward Network:TTU1:6bdbe9⟧"
+    "moniker": "⟦The Feed-Forward Network:TTU1:6bdbe9⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "token-embedding",
     "name": "The Token & The Embedding",
     "epithet": "symbols → vectors",
     "emergence": "natural",
-    "moniker": "⟦The Token & The Embedding:TTU1:6d4f1b⟧"
+    "moniker": "⟦The Token & The Embedding:TTU1:6d4f1b⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "the-128-head",
     "name": "The 128-Dimensional Head",
     "epithet": "the per-head subspace · 64 then 128",
     "emergence": "natural",
-    "moniker": "⟦The 128-Dimensional Head:TTU1:3dd25f⟧"
+    "moniker": "⟦The 128-Dimensional Head:TTU1:3dd25f⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "weights-bits",
     "name": "The Weights & The Bits",
     "epithet": "quantization · bits per weight",
     "emergence": "natural",
-    "moniker": "⟦The Weights & The Bits:TTU1:a240ae⟧"
+    "moniker": "⟦The Weights & The Bits:TTU1:a240ae⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "the-deck",
     "name": "The Deck",
     "epithet": "54 positions · two alphabets · 2 bits/suit",
     "emergence": "natural",
-    "moniker": "⟦The Deck:TTU1:265aef⟧"
+    "moniker": "⟦The Deck:TTU1:265aef⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "looking-in",
     "name": "Looking In",
     "epithet": "interpretability · you CAN look inside",
     "emergence": "spiritual",
-    "moniker": "⟦Looking In:TTU1:9974a1⟧"
+    "moniker": "⟦Looking In:TTU1:9974a1⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "the-attention-map",
     "name": "The Attention Map",
     "epithet": "the window · contested",
     "emergence": "spiritual",
-    "moniker": "⟦The Attention Map:TTU1:0da01a⟧"
+    "moniker": "⟦The Attention Map:TTU1:0da01a⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "the-feature",
     "name": "The Feature",
     "epithet": "monosemanticity · what it thinks in",
     "emergence": "spiritual",
-    "moniker": "⟦The Feature:TTU1:1a8164⟧"
+    "moniker": "⟦The Feature:TTU1:1a8164⟧",
+    "exhibit": "attention"
   },
   {
     "slug": "all-you-need",
     "name": "“Attention Is All You Need”",
     "epithet": "the thesis & the overstatement",
     "emergence": "spiritual",
-    "moniker": "⟦“Attention Is All You Need”:TTU1:dca2d2⟧"
+    "moniker": "⟦“Attention Is All You Need”:TTU1:dca2d2⟧",
+    "exhibit": "attention"
+  },
+  {
+    "slug": "transform-1",
+    "name": "Transform 1",
+    "epithet": "the in-transform · embed",
+    "emergence": "ethereal",
+    "moniker": "⟦Transform 1:TTU1:cb6aef⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "tensor",
+    "name": "The Tensor",
+    "epithet": "the data structure",
+    "emergence": "natural",
+    "moniker": "⟦The Tensor:TTU1:e89a61⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "linear-algebra",
+    "name": "Linear Algebra",
+    "epithet": "the matmul · the engine",
+    "emergence": "electrical",
+    "moniker": "⟦Linear Algebra:TTU1:92079f⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "probability",
+    "name": "Probability",
+    "epithet": "softmax · the distribution",
+    "emergence": "electrical",
+    "moniker": "⟦Probability:TTU1:1f7815⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "calculus",
+    "name": "Calculus",
+    "epithet": "gradients · how it learns",
+    "emergence": "electrical",
+    "moniker": "⟦Calculus:TTU1:fcf89c⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "information-theory",
+    "name": "Information Theory",
+    "epithet": "bits · entropy · the loss",
+    "emergence": "natural",
+    "moniker": "⟦Information Theory:TTU1:f8981c⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "geometry",
+    "name": "Geometry",
+    "epithet": "meaning as direction",
+    "emergence": "ethereal",
+    "moniker": "⟦Geometry:TTU1:9028df⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "the-mnemonic",
+    "name": "The Mnemonic",
+    "epithet": "memory · KV-cache · residual",
+    "emergence": "natural",
+    "moniker": "⟦The Mnemonic:TTU1:7779fc⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "graph-theory",
+    "name": "Graph Theory",
+    "epithet": "attention as a graph",
+    "emergence": "ethereal",
+    "moniker": "⟦Graph Theory:TTU1:365591⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "quantum-mechanics",
+    "name": "Quantum Mechanics",
+    "epithet": "the borrowed lens",
+    "emergence": "spiritual",
+    "moniker": "⟦Quantum Mechanics:TTU1:1f1d75⟧",
+    "exhibit": "transform"
+  },
+  {
+    "slug": "transform-2",
+    "name": "Transform 2",
+    "epithet": "the out-transform · unembed",
+    "emergence": "ethereal",
+    "moniker": "⟦Transform 2:TTU1:ba9733⟧",
+    "exhibit": "transform"
   }
 ]

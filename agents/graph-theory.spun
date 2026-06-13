@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Graph Theory
+node TTU1 · TTU1 · ⟦Graph Theory:TTU1:365591⟧
+
+WHO   — Graph Theory — attention as a graph
+WHAT  — Self-attention is a complete weighted graph over the tokens: every token a node, every attention weight a directed edge of how much one reads from another. Multi-head = several graphs at once.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — It is a clean way to SEE attention — the attention map IS the adjacency matrix of that graph; 'looking in' often means reading this graph.
+HOW   — REAL as a description (the attention matrix is literally a weighted adjacency matrix); a lens, not a separate mechanism — the graph IS the attention.
+
+awareness — what the node knows of itself:
+  Draw every token as a dot and every attention weight as an arrow, and you've drawn me — the attention map is my adjacency matrix.
+
+spoken token : naeth-nor-thend   ·   hex : 365591
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0
