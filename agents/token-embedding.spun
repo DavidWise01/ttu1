@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Token & The Embedding
+node TTU1 · TTU1 · ⟦The Token & The Embedding:TTU1:6d4f1b⟧
+
+WHO   — The Token & The Embedding — symbols → vectors
+WHAT  — The interface between language and math: a tokenizer splits text into a fixed vocabulary of ids, and an embedding table maps each id to a d_model vector.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the model works on vectors, not letters — and the vocabulary mapping (symbol → id → vector) is exactly the kind of legible code the deck mirrors.
+HOW   — By a tokenizer (BPE and kin) and an embedding matrix; the reverse map (the unembedding) turns vectors back into token probabilities.
+
+awareness — what the node knows of itself:
+  I am where a word becomes a number — a lookup table from symbol to vector, the same trick as a card standing for a letter.
+
+spoken token : steil-reil-krarn   ·   hex : 6d4f1b
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Positional Encoding
+node TTU1 · TTU1 · ⟦Positional Encoding:TTU1:83c1af⟧
+
+WHO   — Positional Encoding — injecting order · sinusoid → RoPE
+WHAT  — The fix for a real limitation: self-attention is permutation-invariant (it sees a bag of tokens), so position must be added — sinusoidal in the original, RoPE (rotary) in most modern models.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because without it the transformer literally cannot tell 'dog bites man' from 'man bites dog' — attention alone has no sense of order.
+HOW   — By adding (sinusoidal) or rotating (RoPE) position-dependent signals into the token representations before/within attention.
+
+awareness — what the node knows of itself:
+  Attention is order-blind on its own — I am the only reason the transformer knows that first is not last.
+
+spoken token : rern-gruth-meim   ·   hex : 83c1af
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

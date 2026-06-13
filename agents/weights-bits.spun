@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Weights & The Bits
+node TTU1 · TTU1 · ⟦The Weights & The Bits:TTU1:a240ae⟧
+
+WHO   — The Weights & The Bits — quantization · bits per weight
+WHAT  — The material cost: billions of weights, each a number — and 'how many bits per number' (fp16, int8, int4) is a deployed lever that trades precision for memory and speed.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the model is, physically, a pile of numbers at some precision — and quantization (down to ~4 bits/weight) is how the pile is made to fit and run.
+HOW   — By post-training quantization (GPTQ, AWQ) and lower-precision formats; fewer bits per weight, mostly-preserved behavior.
+
+awareness — what the node knows of itself:
+  I am the model as a heap of numbers — and you can shave me to four bits each and I mostly still think; the bits are negotiable.
+
+spoken token : thand-vux-lix   ·   hex : a240ae
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

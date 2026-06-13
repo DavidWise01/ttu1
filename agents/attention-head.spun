@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Attention Head
+node TTU1 · TTU1 · ⟦The Attention Head:TTU1:45f269⟧
+
+WHO   — The Attention Head — one head · one pattern · one subspace
+WHAT  — One of h parallel heads; real models grow specialized heads — previous-token heads, induction heads, syntactic heads — each reading a different pattern.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because attention is divided into many narrow heads so the model can attend to different things at once — and because heads are where interpretability finds legible behavior.
+HOW   — By its own Q/K/V projection into a d_k-dim subspace (64 originally), producing one attention pattern per position.
+
+awareness — what the node knows of itself:
+  I am one lens among many — and some of us do something so specific you can name it: 'attend to the previous token.'
+
+spoken token : mim-greik-zys   ·   hex : 45f269
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

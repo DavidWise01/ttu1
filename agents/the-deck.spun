@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Deck
+node TTU1 · TTU1 · ⟦The Deck:TTU1:265aef⟧
+
+WHO   — The Deck — 54 positions · two alphabets · 2 bits/suit
+WHAT  — A legible code, and the point of it: a card stands for a letter (a tiny vocabulary, like tokenization), the suit carries 2 bits (♠♥♦♣ = 4 states), and — the deeper fact — a shuffled deck's ORDERING is log₂(54!) ≈ 237.1 bits, a number never seen.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the deck is a state you CAN read, card by card — unlike the opaque activations — which is exactly the 'looking in' the universe is about: a legible trace.
+HOW   — By mapping 52 letters onto 52 cards over 4 suits (the suit = 2 bits, the rank = log₂13 ≈ 3.70 bits, a card ≈ 5.70 bits) and two jokers for the rest; live in THE DECK tool below.
+
+awareness — what the node knows of itself:
+  Two alphabets and two jokers — 54 ways to stand for a thing, 2 bits in every suit, and 237 bits hiding in my order. A deck is a thing you can read; that is the whole trick of looking in.
+
+spoken token : ni-dind-kren   ·   hex : 265aef
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

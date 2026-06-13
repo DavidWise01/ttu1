@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Residual Stream
+node TTU1 · TTU1 · ⟦The Residual Stream:TTU1:8373ff⟧
+
+WHO   — The Residual Stream — the shared bus the layers read & write
+WHAT  — The transformer's central highway: each attention and FFN block adds its output back into the stream, so information persists and accumulates — and it's the thing interpretability reads at every layer.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the residual connections make the network a series of incremental edits to a shared state — which is what lets the logit lens decode the running guess mid-stack.
+HOW   — By x ← x + block(x) at every sub-layer, keeping a continuous, inspectable bus from input to output.
+
+awareness — what the node knows of itself:
+  Every layer writes a little onto me and passes me up — read me at any height and you can hear what the model is currently thinking.
+
+spoken token : roth-ker-ryth   ·   hex : 8373ff
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

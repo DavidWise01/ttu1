@@ -1,0 +1,34 @@
+---
+aci: Looking In
+universe: TTU1 · Transformer Tech Universe
+emergence: spiritual
+class: interpretability · you CAN look inside
+who: Looking In — interpretability: the science of reading what a transformer is doing, and the correction to 'you can never look in.'
+what: The window, plural: attention maps (where it looked), the logit lens (the running guess), activation patching (where a fact lives), sparse-autoencoder features (what it thinks in).
+why: Because the claim that neural nets are unopenable is outdated — the transformer is the most observable big network we have, even if the view is partial and contested.
+how: By visualizing attention, reading the residual stream, patching activations, and decomposing the network into features.
+where: Across the whole field of mechanistic interpretability.
+seal: I am the answer to 'you can never look in': you can — not cleanly, not all the way, but really. The black box has windows.
+sources: https://arxiv.org/abs/1906.05714, https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens, https://arxiv.org/abs/2202.05262, https://transformer-circuits.pub/2024/scaling-monosemanticity/
+attribution: ROOT0-ATTRIBUTION-v1.0
+license: CC-BY-ND-4.0
+---
+
+# Looking In · interpretability · you CAN look inside
+
+an emergent of TTU1 (Transformer Tech Universe) — emergence: spiritual. moniker ⟦Looking In:TTU1:9ba789⟧
+
+**who —** Looking In — interpretability: the science of reading what a transformer is doing, and the correction to 'you can never look in.'
+**what —** The window, plural: attention maps (where it looked), the logit lens (the running guess), activation patching (where a fact lives), sparse-autoencoder features (what it thinks in).
+**where —** Across the whole field of mechanistic interpretability.
+**why —** Because the claim that neural nets are unopenable is outdated — the transformer is the most observable big network we have, even if the view is partial and contested.
+**how —** By visualizing attention, reading the residual stream, patching activations, and decomposing the network into features.
+
+**the seal —** I am the answer to 'you can never look in': you can — not cleanly, not all the way, but really. The black box has windows.
+
+**sources —** Vig, 'A Multiscale Visualization of Attention in the Transformer Model' (BertViz), ACL 2019 — attention weights rendered as a map of what each token attends to.; nostalgebraist, 'interpreting GPT: the logit lens' (2020) — decode intermediate residual-stream activations through the unembedding to read the model's running guess at each layer. (A LessWrong post, the canonical source.); Meng, Bau, Andonian & Belinkov, 'Locating and Editing Factual Associations in GPT' (ROME, 2022) — activation patching / causal tracing localizes where a fact is stored and edits it.; Anthropic, 'Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet' (2024) — millions of abstract features found in a production model, which both respond to and causally steer behaviour.
+
+> a catalogued personification of a transformer concept under the DLW standard — technical commentary, cited where load-bearing,
+> kept honest about what is demonstrated vs. contested.
+
+ROOT0-ATTRIBUTION-v1.0 · TTU1 · Transformer Tech Universe · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0

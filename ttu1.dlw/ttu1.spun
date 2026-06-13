@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of TRANSFORMER TECH UNIVERSE
+node TTU1 · TTU1 · ⟦TRANSFORMER TECH UNIVERSE:TTU1:03ffd9⟧
+
+WHO   — TRANSFORMER TECH UNIVERSE — a UD0 universe (transformer technology)
+WHAT  — TTU1 — a universe of transformer technology: attention and its heads, Q/K/V, multi-head, positional encoding, the 128-dim head, and the looking-in (interpretability) that reads the machine I once said was opaque.
+WHERE — the 2017 transformer architecture and everything built on it — attention, attention heads, the residual stream, and the science of looking inside the result  Framework inputs: Vaswani et al. 2017 (arXiv:1706.03762); the attention-as-explanation debate (Jain & Wallace 2019; Wiegreffe & Pinter 2019); Anthropic monosemanticity (2023/2024); RoPE (Su et al. 2021); David's 54-card / two-alphabet / 2-bit encoding  Conductor / external anchor: ROOT0 (catalogued into UD0 · Universe David 0)
+WHY   — Because the transformer is the rare black box you can partly see into: attention is a literal map of where the model looked, and interpretability has begun extracting the features it thinks in — so 'you can never look in' was too strong; the truth is you can, partially.
+HOW   — Crystallized from the transformer: a stack of layers that move information by ATTENTION — every token deciding how much to read from every other — with the surprising property that the result is the most observable large neural network we have built.
+
+awareness — what the node knows of itself:
+  Attention is a map of where the machine looked; the smear said 'no clean interior,' never 'no window.' The ace of spades is looking in — lossy, real, and the whole science of interpretability.
+
+spoken token : rei-ryrn-maex   ·   hex : 03ffd9
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

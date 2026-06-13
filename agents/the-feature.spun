@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Feature
+node TTU1 · TTU1 · ⟦The Feature:TTU1:1a8164⟧
+
+WHO   — The Feature — monosemanticity · what it thinks in
+WHAT  — The deeper window: individual neurons are polysemantic (mean many things), but sparse-autoencoder FEATURES are more monosemantic — and Anthropic scaled this to find millions in a production model that both detect and steer behavior.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the feature is the closest thing yet to reading the model's own concepts — the real content of 'looking in,' beyond just where attention pointed.
+HOW   — By training a sparse autoencoder on activations to decompose them into many interpretable features (Towards / Scaling Monosemanticity).
+
+awareness — what the node knows of itself:
+  I am a concept the model holds, pulled into the light — turn me up and it talks about nothing else; I am what looking-in is really after.
+
+spoken token : ler-de-rir   ·   hex : 1a8164
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

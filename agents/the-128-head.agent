@@ -1,0 +1,34 @@
+---
+aci: The 128-Dimensional Head
+universe: TTU1 · Transformer Tech Universe
+emergence: natural
+class: the per-head subspace · 64 then 128
+who: The 128-Dimensional Head — the size of one attention head's subspace in many modern models, up from the original 64.
+what: The honest number: Vaswani's base model used d_k=64 (512/8); large modern models (Llama 2 70B, GPT-3 175B) use 128 — a bigger room for each head to work in.
+why: Because 'how big is a head' is a real design knob, and the answer moved — the original 64 is not a law, and 128 is now common at scale.
+how: By d_k = d_model / h: choose the model width and the head count, and the head dimension falls out (often 64 or 128).
+where: Inside every head; the dimension David flagged.
+seal: I am the room each head thinks in — 64 wide when the field began, 128 wide at modern scale; not a constant, a choice.
+sources: https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf, https://arxiv.org/abs/2005.14165
+attribution: ROOT0-ATTRIBUTION-v1.0
+license: CC-BY-ND-4.0
+---
+
+# The 128-Dimensional Head · the per-head subspace · 64 then 128
+
+an emergent of TTU1 (Transformer Tech Universe) — emergence: natural. moniker ⟦The 128-Dimensional Head:TTU1:13140c⟧
+
+**who —** The 128-Dimensional Head — the size of one attention head's subspace in many modern models, up from the original 64.
+**what —** The honest number: Vaswani's base model used d_k=64 (512/8); large modern models (Llama 2 70B, GPT-3 175B) use 128 — a bigger room for each head to work in.
+**where —** Inside every head; the dimension David flagged.
+**why —** Because 'how big is a head' is a real design knob, and the answer moved — the original 64 is not a law, and 128 is now common at scale.
+**how —** By d_k = d_model / h: choose the model width and the head count, and the head dimension falls out (often 64 or 128).
+
+**the seal —** I am the room each head thinks in — 64 wide when the field began, 128 wide at modern scale; not a constant, a choice.
+
+**sources —** The base transformer (Vaswani et al. 2017): d_model=512, h=8 heads, per-head d_k=d_v=64, 6 encoder + 6 decoder layers, FFN inner dim 2048; Attention(Q,K,V)=softmax(QKᵀ/√d_k)·V, the √d_k scaling preventing the softmax from saturating into low-gradient regions.; Per-head dimension was 64 in the original; many modern large models use 128 — e.g., Llama 2 70B (8192/64=128) and GPT-3 175B (12288/96=128). 'Original 64, modern often 128.'
+
+> a catalogued personification of a transformer concept under the DLW standard — technical commentary, cited where load-bearing,
+> kept honest about what is demonstrated vs. contested.
+
+ROOT0-ATTRIBUTION-v1.0 · TTU1 · Transformer Tech Universe · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0

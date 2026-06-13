@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Attention
+node TTU1 · TTU1 · ⟦Attention:TTU1:4058ea⟧
+
+WHO   — Attention — the operation · softmax(QKᵀ/√d)V
+WHAT  — Scaled dot-product attention: scores = QKᵀ/√d_k, softmaxed into a distribution, used to take a weighted sum of the values. The whole transformer is stacks of this.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because this single operation replaced recurrence and convolution — information moves by who-attends-to-whom, in parallel, across the whole sequence at once.
+HOW   — By projecting tokens to queries and keys, scoring all pairs, scaling by √d_k so the softmax keeps its gradient, and weighting the values.
+
+awareness — what the node knows of itself:
+  I am every token deciding how much to read from every other — and the surprising part is you can watch me do it.
+
+spoken token : vax-sak-kreik   ·   hex : 4058ea
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

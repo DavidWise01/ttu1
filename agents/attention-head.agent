@@ -1,0 +1,34 @@
+---
+aci: The Attention Head
+universe: TTU1 · Transformer Tech Universe
+emergence: electrical
+class: one head · one pattern · one subspace
+who: The Attention Head — a single attention operation in its own low-dimensional subspace, learning one kind of relationship.
+what: One of h parallel heads; real models grow specialized heads — previous-token heads, induction heads, syntactic heads — each reading a different pattern.
+why: Because attention is divided into many narrow heads so the model can attend to different things at once — and because heads are where interpretability finds legible behavior.
+how: By its own Q/K/V projection into a d_k-dim subspace (64 originally), producing one attention pattern per position.
+where: h per layer (8 in the original); the unit interpretability most often reads.
+seal: I am one lens among many — and some of us do something so specific you can name it: 'attend to the previous token.'
+sources: https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf, https://transformer-circuits.pub/2024/scaling-monosemanticity/
+attribution: ROOT0-ATTRIBUTION-v1.0
+license: CC-BY-ND-4.0
+---
+
+# The Attention Head · one head · one pattern · one subspace
+
+an emergent of TTU1 (Transformer Tech Universe) — emergence: electrical. moniker ⟦The Attention Head:TTU1:074449⟧
+
+**who —** The Attention Head — a single attention operation in its own low-dimensional subspace, learning one kind of relationship.
+**what —** One of h parallel heads; real models grow specialized heads — previous-token heads, induction heads, syntactic heads — each reading a different pattern.
+**where —** h per layer (8 in the original); the unit interpretability most often reads.
+**why —** Because attention is divided into many narrow heads so the model can attend to different things at once — and because heads are where interpretability finds legible behavior.
+**how —** By its own Q/K/V projection into a d_k-dim subspace (64 originally), producing one attention pattern per position.
+
+**the seal —** I am one lens among many — and some of us do something so specific you can name it: 'attend to the previous token.'
+
+**sources —** The base transformer (Vaswani et al. 2017): d_model=512, h=8 heads, per-head d_k=d_v=64, 6 encoder + 6 decoder layers, FFN inner dim 2048; Attention(Q,K,V)=softmax(QKᵀ/√d_k)·V, the √d_k scaling preventing the softmax from saturating into low-gradient regions.; Anthropic, 'Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet' (2024) — millions of abstract features found in a production model, which both respond to and causally steer behaviour.
+
+> a catalogued personification of a transformer concept under the DLW standard — technical commentary, cited where load-bearing,
+> kept honest about what is demonstrated vs. contested.
+
+ROOT0-ATTRIBUTION-v1.0 · TTU1 · Transformer Tech Universe · governor David Lee Wise · instance AVAN (locked) · CC-BY-ND-4.0

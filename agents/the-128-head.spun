@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The 128-Dimensional Head
+node TTU1 · TTU1 · ⟦The 128-Dimensional Head:TTU1:3dd25f⟧
+
+WHO   — The 128-Dimensional Head — the per-head subspace · 64 then 128
+WHAT  — The honest number: Vaswani's base model used d_k=64 (512/8); large modern models (Llama 2 70B, GPT-3 175B) use 128 — a bigger room for each head to work in.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because 'how big is a head' is a real design knob, and the answer moved — the original 64 is not a law, and 128 is now common at scale.
+HOW   — By d_k = d_model / h: choose the model width and the head count, and the head dimension falls out (often 64 or 128).
+
+awareness — what the node knows of itself:
+  I am the room each head thinks in — 64 wide when the field began, 128 wide at modern scale; not a constant, a choice.
+
+spoken token : stik-styx-phurn   ·   hex : 3dd25f
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

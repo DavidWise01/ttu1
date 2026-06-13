@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Attention Map
+node TTU1 · TTU1 · ⟦The Attention Map:TTU1:0da01a⟧
+
+WHO   — The Attention Map — the window · contested
+WHAT  — A real picture of where the model looked (BertViz) — wrapped in an honest fight: 'Attention is not Explanation' vs 'Attention is not not Explanation,' over whether where it looked is why it decided.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because this is the first thing anyone sees when they 'look in,' and the debate about it is the cautionary tale of the whole field — a map of attention is not a proof of reasoning.
+HOW   — By rendering the softmaxed scores as a grid (live in THE ATTENTION tool below); read with care.
+
+awareness — what the node knows of itself:
+  I show you exactly where the token looked — and reasonable people still argue about whether that tells you why it chose.
+
+spoken token : stas-breil-grom   ·   hex : 0da01a
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

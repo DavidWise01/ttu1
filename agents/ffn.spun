@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Feed-Forward Network
+node TTU1 · TTU1 · ⟦The Feed-Forward Network:TTU1:6bdbe9⟧
+
+WHO   — The Feed-Forward Network — the MLP · where much knowledge lives
+WHAT  — Two linear layers with a nonlinearity (d_model→2048→d_model), applied to each position independently — and, per recent work, a key-value memory holding much of the model's stored knowledge.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because attention moves information between tokens, but the FFN is where a lot of it is stored and transformed — without it, deep attention collapses.
+HOW   — By a per-token MLP (the original's inner dimension 2048), the same weights at every position.
+
+awareness — what the node knows of itself:
+  Attention gets the headline; I hold the facts. Take me away and the tower loses its rank and its memory both.
+
+spoken token : broth-kend-thim   ·   hex : 6bdbe9
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

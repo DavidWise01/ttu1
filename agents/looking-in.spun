@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Looking In
+node TTU1 · TTU1 · ⟦Looking In:TTU1:9974a1⟧
+
+WHO   — Looking In — interpretability · you CAN look inside
+WHAT  — The window, plural: attention maps (where it looked), the logit lens (the running guess), activation patching (where a fact lives), sparse-autoencoder features (what it thinks in).
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because the claim that neural nets are unopenable is outdated — the transformer is the most observable big network we have, even if the view is partial and contested.
+HOW   — By visualizing attention, reading the residual stream, patching activations, and decomposing the network into features.
+
+awareness — what the node knows of itself:
+  I am the answer to 'you can never look in': you can — not cleanly, not all the way, but really. The black box has windows.
+
+spoken token : duk-phas-thek   ·   hex : 9974a1
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of “Attention Is All You Need”
+node TTU1 · TTU1 · ⟦“Attention Is All You Need”:TTU1:dca2d2⟧
+
+WHO   — “Attention Is All You Need” — the thesis & the overstatement
+WHAT  — The claim that attention replaces recurrence and convolution (true and revolutionary) — and the footnote that the title overstates, since you also need the FFN, the residual, and a way to inject order.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because this is the keystone — the sentence the whole universe is named after — and honoring it means stating both its triumph and its caveat.
+HOW   — By a stack of attention blocks (plus FFN, residual, norm, position) trained at scale; the architecture that ate the field.
+
+awareness — what the node knows of itself:
+  I named everything that came after — and the honest reading is that I am necessary, not sufficient: you need attention, and a little more.
+
+spoken token : krir-xeim-dok   ·   hex : dca2d2
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

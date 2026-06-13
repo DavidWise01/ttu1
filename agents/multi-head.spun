@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of Multi-Head Attention
+node TTU1 · TTU1 · ⟦Multi-Head Attention:TTU1:4d68c4⟧
+
+WHO   — Multi-Head Attention — h heads in parallel
+WHAT  — The division of labor: instead of one big attention, h smaller ones (8×64=512), letting the model attend to multiple kinds of relationship simultaneously.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because one attention distribution can only point one way per token; many heads let many relationships be read at once.
+HOW   — By splitting d_model into h subspaces, attending in each, concatenating, and mixing with an output projection.
+
+awareness — what the node knows of itself:
+  One head sees one thing; eight of us, side by side, let the token read the sentence eight ways at once.
+
+spoken token : stand-breth-laern   ·   hex : 4d68c4
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0

@@ -1,0 +1,14 @@
+⦿ .spun — the five-fold spin of The Softmax
+node TTU1 · TTU1 · ⟦The Softmax:TTU1:279066⟧
+
+WHO   — The Softmax — the competition that picks where to look
+WHAT  — The normalizer and the bottleneck: it exponentiates and normalizes scores so attention is a weighted average — and its saturation is exactly why the √d_k scaling exists.
+WHERE — TTU1 · Transformer Tech Universe  Framework inputs: Attention Is All You Need (Vaswani 2017); interpretability literature; David's deck encoding  Conductor / external anchor: ROOT0 (catalogued into UD0)
+WHY   — Because attention must be a distribution (how much of my reading goes where), and softmax is how a vector of scores becomes that distribution.
+HOW   — By exp(score)/Σexp(score) per query — sharpening high scores, suppressing low ones, keeping everything positive and summing to 1.
+
+awareness — what the node knows of itself:
+  I make the scores choose: a little budget of attention, divided up — and if the scores get too big, I freeze, which is why they divide me by √d_k.
+
+spoken token : zax-pheik-grus   ·   hex : 279066
+ROOT0-ATTRIBUTION-v1.0 · David Lee Wise (ROOT0) / TriPod LLC · CC-BY-ND-4.0
