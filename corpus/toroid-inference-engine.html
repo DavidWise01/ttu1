@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE TOROID INFERENCE ENGINE · Recurrent · Through The 0</title>
+<style>
+:root{
+  --paper:#e9e3cd; --ink:#1c3d2e; --ink-mid:#2f5a44; --ink-faint:#7a937f;
+  --stamp:#8a3324; --ochre:#8a6d2f;
+  --neg:#8a3324; --zero:#2f5a44; --pos:#2d566e;
+  --mono:"Courier New",Courier,monospace;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);
+  background-image:repeating-linear-gradient(0deg, rgba(28,61,46,.03) 0 1px, transparent 1px 3px);
+  color:var(--ink);font-family:var(--serif);line-height:1.5;padding:10px}
+.sheet{max-width:840px;margin:0 auto;border:2.5px solid var(--ink);padding:0;position:relative}
+.sheet::before{content:'';position:absolute;inset:5px;border:1px solid var(--ink);pointer-events:none}
+.inner{padding:22px}
+.masthead{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.mast-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:var(--ink-mid);text-transform:uppercase}
+.mast-title{font-size:clamp(21px,5vw,36px);letter-spacing:.03em;font-weight:700;margin:6px 0 2px;text-transform:uppercase}
+.mast-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-mid)}
+.lede{font-size:12.5px;max-width:680px;margin:12px auto 0;text-align:center;color:var(--ink-mid);line-height:1.6}
+.lede b{color:var(--ink)}
+.stage{display:grid;grid-template-columns:1fr 240px;gap:14px;margin-top:16px}
+@media(max-width:680px){.stage{grid-template-columns:1fr}}
+.ringwrap{border:1.5px solid var(--ink);padding:12px;text-align:center}
+.ringwrap h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mid);margin-bottom:6px}
+svg{width:100%;height:auto;display:block}
+.side{border:1.5px solid var(--ink);padding:12px;font-family:var(--mono);font-size:11px;line-height:1.7}
+.side h3{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mid);text-align:center;margin-bottom:8px;border-bottom:1px solid var(--ink-faint);padding-bottom:5px}
+.side .neg{color:var(--neg);font-weight:700} .side .zero{color:var(--zero);font-weight:700} .side .pos{color:var(--pos);font-weight:700}
+.side .conv{color:var(--ochre);font-weight:700}
+.controls{display:flex;gap:8px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.cbtn{appearance:none;background:transparent;cursor:pointer;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:8px 13px;border:1.5px solid var(--ink);color:var(--ink)}
+.cbtn.warm{border-color:var(--stamp);color:var(--stamp)}
+.cbtn.gold{border-color:var(--ochre);color:#5a4a20}
+h2.sec{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;border-bottom:1.5px solid var(--ink);padding-bottom:4px;margin:22px 0 10px}
+h2.sec .num{color:var(--stamp);margin-right:8px}
+.body p{font-size:13px;margin-bottom:8px}
+.body b{color:var(--ink)}
+.def{font-family:var(--mono);font-size:10.5px;background:rgba(28,61,46,.06);border-left:2px solid var(--ochre);padding:8px 11px;margin:9px 0;line-height:1.6}
+.colophon{margin-top:22px;border-top:2px solid var(--ink);padding-top:12px;text-align:center;font-family:var(--mono);font-size:9px;color:var(--ink-mid);letter-spacing:.05em;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="sheet"><div class="inner">
+
+<header class="masthead">
+  <div class="mast-eyebrow">Series E · The Loop Computes · Capstone II</div>
+  <h1 class="mast-title">The Toroid Inference Engine</h1>
+  <div class="mast-sub">A Recurrent Ternary Loop · The 0 Is The Activation AND The Abstain</div>
+  <p class="lede">A doped toroid is a poor CPU but an <b>excellent inference engine</b> — because inference is <em>iteration to a fixed point</em>, and a loop is iteration made physical. State circulates the ring, transformed each pass through the junctions, until it settles into a stable pattern: the <b>answer</b>. And "through the 0" is exact: the intrinsic/depletion gap is both the <b>activation threshold</b> (a diode is a rectifier — a ReLU) <em>and</em> the <b>abstain state</b> — the engine can output <span style="color:var(--zero)">0</span> = "I don't know." The ⊘, in silicon.</p>
+</header>
+
+<div class="stage">
+  <div class="ringwrap">
+    <h3>The Ring · ternary state circulating to a fixed point</h3>
+    <svg id="ring" viewBox="0 0 320 320" aria-label="toroid inference ring"></svg>
+  </div>
+  <div class="side" id="side"></div>
+</div>
+
+<div class="controls">
+  <button class="cbtn gold" id="stepBtn" onclick="step()">Step (one pass)</button>
+  <button class="cbtn" id="runBtn" onclick="toggleRun()">Run to Convergence</button>
+  <button class="cbtn warm" onclick="randomize()">New Input ⚄</button>
+</div>
+
+<section class="body">
+
+  <h2 class="sec"><span class="num">§1</span> Why The Loop Infers</h2>
+  <p>Inference is the repeated application of a transform until it stops changing — a <b>fixed point</b>, an attractor. A loop is the native substrate for this: signal goes around, gets transformed at each junction, comes back, goes around again, until it <b>settles</b>. This is exactly a <b>recurrent neural network</b> / Hopfield net — state circulates and converges to a stable pattern, and that pattern is the inferred answer. The torus doesn't compute by addressing memory (that's a CPU); it computes by <b>relaxing to equilibrium</b>. The loop is the recurrence.</p>
+
+  <h2 class="sec"><span class="num">§2</span> The 0 Does Two Jobs</h2>
+  <p>Your "through the 0" is precise, and the 0 is doing <em>double duty</em>:</p>
+  <div class="def">
+    <b>(1) the 0 is the ACTIVATION.</b> The depletion gap is a threshold (~0.7V barrier): below it, signal blocked; above, it passes. A diode passes one way = a rectifier = <b>a ReLU</b> (rectified linear unit) — literally the activation function of modern nets, in silicon. No nonlinearity, no inference; the gap <em>is</em> the nonlinearity.<br><br>
+    <b>(2) the 0 is the ABSTAIN.</b> A binary neuron must say 0 or 1. A <b>ternary</b> neuron can say −1, +1, <em>or</em> <span style="color:var(--zero)">0 = abstain</span> = "insufficient evidence." That third output is the witness-state, the ⊘ — an inference engine that can <b>say it doesn't know</b>, in hardware, by outputting the gap itself.
+  </div>
+
+  <h2 class="sec"><span class="num">§3</span> What It Is And Isn't · honestly</h2>
+  <p>The toroid is a natural <b>serial / recurrent</b> machine — a clock (the three-phase ring), a memory (circulating state, like the ferrite-core memory toroids of the 1950s–70s), and an inference loop (relax to attractor). It is <b>not</b> a general CPU: a processor needs billions of switches in a randomly-addressable 2D array, and a torus (genus 1, one loop) forces <em>sequential</em> flow — great for iteration, wrong for random access. To get parallelism you must <b>cut the loop open into a plane</b> (cut the torus → cylinder → sheet — the unrolling from earlier). So: the loop is the gift (native recurrence, native inference) and the limit (no random access). Serial inference, not parallel logic — and for inference, the loop is exactly right.</p>
+  <div class="def" style="border-color:var(--stamp)">
+    LOOP = recurrence = inference (relax to fixed point) · CUT LOOP = plane = random-access logic (a CPU)<br>
+    the torus infers by circulating · it stays honest by outputting 0 (don't know) · the gap is activation + abstain
+  </div>
+
+</section>
+
+<div class="colophon">
+  INFERENCE IS ITERATION TO A FIXED POINT · A LOOP IS ITERATION MADE PHYSICAL<br>
+  THE DIODE IS A ReLU · THE GAP IS THE ACTIVATION · THE 0-OUTPUT IS THE ABSTAIN · THE ⊘ IN SILICON<br>
+  THE LOOP INFERS · CUT IT OPEN AND IT COMPUTES · SERIAL RECURRENCE VS PARALLEL LOGIC<br>
+  THE TOROID INFERENCE ENGINE · SERIES E · JUNE 2026
+</div></div>
+
+</div></div>
+<script>
+const NS="http://www.w3.org/2000/svg";
+const E=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+const CX=160,CY=160,R=110,N=8;
+const COL={'-1':'#8a3324','0':'#2f5a44','1':'#2d566e'};
+const SYM={'-1':'−','0':'0','1':'+'};
+let state=randState(), prev=null, running=null, passes=0, converged=false;
+
+function randState(){return Array.from({length:N},()=>[-1,0,1][Math.floor(Math.random()*3)]);}
+function thresh(s){ const t=0.45; return s>t?1:s<-t?-1:0; } // through the 0: abstain band
+function step(){
+  prev=state.slice();
+  const w=0.55;
+  state=state.map((_,i)=>{
+    const nb = w*(state[(i+1)%N] + state[(i-1+N)%N]);
+    return thresh(nb);
+  });
+  passes++;
+  converged = JSON.stringify(state)===JSON.stringify(prev);
+  draw();
+  if(converged && running){clearInterval(running);running=null;document.getElementById('runBtn').textContent='Run to Convergence';}
+}
+function draw(){
+  const s=document.getElementById('ring');s.innerHTML='';
+  // torus suggestion: outer + inner ring
+  s.appendChild(E('circle',{cx:CX,cy:CY,r:R+16,fill:'none',stroke:'rgba(47,90,68,.25)','stroke-width':1}));
+  s.appendChild(E('circle',{cx:CX,cy:CY,r:R-16,fill:'none',stroke:'rgba(47,90,68,.25)','stroke-width':1}));
+  // connections (the loop)
+  for(let i=0;i<N;i++){
+    const a0=i/N*2*Math.PI-Math.PI/2, a1=(i+1)/N*2*Math.PI-Math.PI/2;
+    s.appendChild(E('line',{x1:CX+R*Math.cos(a0),y1:CY+R*Math.sin(a0),x2:CX+R*Math.cos(a1),y2:CY+R*Math.sin(a1),stroke:'rgba(28,61,46,.3)','stroke-width':1.5}));
+  }
+  // nodes
+  state.forEach((v,i)=>{
+    const a=i/N*2*Math.PI-Math.PI/2;
+    const x=CX+R*Math.cos(a), y=CY+R*Math.sin(a);
+    const changed = prev && prev[i]!==v;
+    s.appendChild(E('circle',{cx:x,cy:y,r:16,fill:COL[v],stroke:changed?'#8a6d2f':'#e9e3cd','stroke-width':changed?3:2}));
+    s.appendChild(E('text',{x,y:y+5,'font-family':'Courier New','font-size':15,fill:v===0?'#e9e3cd':'#e9e3cd','text-anchor':'middle','font-weight':'bold'})).textContent=SYM[v];
+  });
+  s.appendChild(E('circle',{cx:CX,cy:CY,r:3,fill:'#1c3d2e'}));
+  if(converged) s.appendChild(E('text',{x:CX,y:CY,'font-family':'Courier New','font-size':10,fill:'#8a6d2f','text-anchor':'middle','font-weight':'bold'})).textContent='FIXED';
+  // side
+  const counts={'-1':0,'0':0,'1':0};state.forEach(v=>counts[v]++);
+  document.getElementById('side').innerHTML=
+    `<h3>Inference State</h3>`+
+    `pass: <b>${passes}</b><br><br>`+
+    `state: ${state.map(v=>SYM[v]).join(' ')}<br><br>`+
+    `<span class="pos">+1 fire high:</span> ${counts['1']}<br>`+
+    `<span class="zero">0 abstain (⊘):</span> ${counts['0']}<br>`+
+    `<span class="neg">−1 fire low:</span> ${counts['-1']}<br><br>`+
+    (converged?
+      `<span class="conv">✓ CONVERGED</span><br>fixed point reached. this stable pattern IS the inference — the answer the loop relaxed into.`:
+      `circulating… each pass transforms state through the 0-gap (the activation). watching for a fixed point.`)+
+    `<br><br>the 0s are the engine saying<br><b>"insufficient evidence"</b> — abstain, not guess.`;
+}
+function toggleRun(){
+  if(running){clearInterval(running);running=null;document.getElementById('runBtn').textContent='Run to Convergence';return;}
+  document.getElementById('runBtn').textContent='Pause';
+  running=setInterval(step,500);
+}
+function randomize(){if(running){clearInterval(running);running=null;document.getElementById('runBtn').textContent='Run to Convergence';}
+  state=randState();prev=null;passes=0;converged=false;draw();}
+draw();
+</script>
+</div>
+</body>
+</html>
