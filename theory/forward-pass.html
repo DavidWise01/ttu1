@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dense Transformer Forward Pass</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a12; color: #e2e0f0; font-family: system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+h1 { font-size: 15px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: #7c6ec4; margin-bottom: 20px; }
+#canvas { display: block; width: 100%; max-width: 680px; height: 520px; background: #0a0a12; border-radius: 12px; border: 0.5px solid #2a2840; cursor: pointer; }
+#controls { display: flex; gap: 16px; align-items: center; padding: 14px 0 0; flex-wrap: wrap; max-width: 680px; width: 100%; }
+#controls label { font-size: 13px; color: #888; }
+#controls button { font-size: 13px; padding: 7px 16px; background: transparent; border: 0.5px solid #3a3660; color: #c4b5fd; border-radius: 8px; cursor: pointer; }
+#controls button:hover { background: #1a1830; }
+#phase-label { font-size: 13px; font-weight: 500; min-width: 220px; transition: color 0.3s; }
+input[type=range] { vertical-align: middle; width: 80px; accent-color: #7c6ec4; }
+footer { margin-top: 20px; font-size: 11px; color: #3a3660; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<h1>Dense Transformer · Forward Pass</h1>
+<canvas id="canvas"></canvas>
+<div id="controls">
+  <button onclick="restart()">Fire prompt ↗</button>
+  <label>Speed <input type="range" id="speed" min="0.2" max="3" step="0.1" value="1"></label>
+  <span id="phase-label" style="color:#555">Ready — click to fire</span>
+</div>
+<footer>TOPH · TriPod LLC · DLW · 2026-04-09</footer>
+<script>
+const cv = document.getElementById('canvas');
+const ctx = cv.getContext('2d');
+const lbl = document.getElementById('phase-label');
+
+let W, H, cx, cy, t = 0, running = false, raf;
+const LAYERS = 24;
+const THREADS_PER_LAYER = 18;
+
+function resize() {
+  const rect = cv.getBoundingClientRect();
+  W = cv.width  = rect.width  * devicePixelRatio;
+  H = cv.height = rect.height * devicePixelRatio;
+  cx = W / 2; cy = H / 2;
+}
+resize();
+window.addEventListener('resize', () => { resize(); if (!running) drawIdle(); });
+
+const phases = [
+  { label: 'Embedding layer — first flash',       start: 0,    end: 0.12, color: '#c4b5fd' },
+  { label: 'Early layers — syntax & proximity',   start: 0.12, end: 0.3,  color: '#93c5fd' },
+  { label: 'Middle layers — attention flooding',  start: 0.3,  end: 0.6,  color: '#67e8f9' },
+  { label: 'Deep layers — concept assembly',      start: 0.6,  end: 0.82, color: '#86efac' },
+  { label: 'Output layers — response shaping',    start: 0.82, end: 1.0,  color: '#fde68a' },
+];
+
+function getPhase(p) {
+  for (const ph of phases) if (p >= ph.start && p <= ph.end) return ph;
+  return phases[phases.length - 1];
+}
+
+const seeds = [];
+for (let i = 0; i < THREADS_PER_LAYER * LAYERS; i++) {
+  const layer = Math.floor(i / THREADS_PER_LAYER);
+  const slot  = i % THREADS_PER_LAYER;
+  const baseAngle = (slot / THREADS_PER_LAYER) * Math.PI * 2 + layer * 0.07;
+  const wobble = (Math.random() - 0.5) * 0.18;
+  const speed  = 0.7 + Math.random() * 0.6;
+  const delay  = layer / LAYERS * 0.55 + Math.random() * 0.06;
+  const maxR   = (0.28 + Math.random() * 0.18) * Math.min(W || 600, H || 500) * 0.5;
+  const curve  = (Math.random() - 0.5) * 0.6;
+  seeds.push({ angle: baseAngle + wobble, speed, delay, maxR, curve, layer });
+}
+
+const gateLabels = ['G0 embed', 'G1 128.5', 'G2 192.5', 'G3 deep', 'G4 emit'];
+const gateColors = ['#c4b5fd', '#93c5fd', '#67e8f9', '#86efac', '#fde68a'];
+const gates      = [0.12, 0.3, 0.6, 0.82, 1.0];
+
+function drawFrame(progress) {
+  ctx.clearRect(0, 0, W, H);
+
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W,H) * 0.52);
+  bg.addColorStop(0, '#14103a');
+  bg.addColorStop(1, '#0a0a12');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  seeds.forEach(s => {
+    const localP = Math.max(0, Math.min(1, (progress - s.delay) / (1 - s.delay) * s.speed));
+    if (localP <= 0) return;
+
+    const maxR  = (0.28 + (s.layer / LAYERS) * 0.18) * Math.min(W, H) * 0.48;
+    const r     = localP * maxR;
+    const angle = s.angle + s.curve * localP;
+    const x     = cx + Math.cos(angle) * r;
+    const y     = cy + Math.sin(angle) * r;
+    const alpha = localP < 0.15 ? localP / 0.15 : localP > 0.75 ? 1 - (localP - 0.75) / 0.25 : 1;
+
+    const lf = s.layer / LAYERS;
+    const col = lf < 0.15 ? '#c4b5fd'
+              : lf < 0.35 ? '#93c5fd'
+              : lf < 0.6  ? '#67e8f9'
+              : lf < 0.82 ? '#86efac'
+              :              '#fde68a';
+
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(s.angle) * 4, cy + Math.sin(s.angle) * 4);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = alpha * 0.72;
+    ctx.lineWidth   = (0.8 + (1 - lf) * 1.2) * devicePixelRatio;
+    ctx.stroke();
+
+    if (localP > 0.05) {
+      ctx.beginPath();
+      ctx.arc(x, y, (1.2 + lf * 2) * devicePixelRatio, 0, Math.PI * 2);
+      ctx.fillStyle  = col;
+      ctx.globalAlpha = alpha * 0.55;
+      ctx.fill();
+    }
+  });
+
+  ctx.globalAlpha = 1;
+
+  const pulseR = (14 + 6 * Math.sin(progress * Math.PI * 4)) * devicePixelRatio;
+  const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulseR);
+  core.addColorStop(0, '#ffffff');
+  core.addColorStop(0.3, '#e0d4ff');
+  core.addColorStop(1, 'rgba(180,140,255,0)');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+  ctx.fill();
+
+  const ringCount = Math.floor(progress * 8);
+  for (let i = 0; i < ringCount; i++) {
+    const rr = ((progress * 8 - i) / 8) * Math.min(W, H) * 0.48;
+    const a  = Math.max(0, 0.25 - (progress * 8 - i) / 8 * 0.25);
+    ctx.beginPath();
+    ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+    ctx.strokeStyle  = '#7c6ec4';
+    ctx.globalAlpha  = a;
+    ctx.lineWidth    = 0.5 * devicePixelRatio;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  gates.forEach((g, i) => {
+    const active = progress >= g - 0.01;
+    const gr = g * Math.min(W, H) * 0.44;
+    ctx.beginPath();
+    ctx.arc(cx, cy, gr, 0, Math.PI * 2);
+    ctx.strokeStyle  = active ? gateColors[i] : '#2a2840';
+    ctx.globalAlpha  = active ? 0.35 : 0.12;
+    ctx.lineWidth    = (active ? 1 : 0.5) * devicePixelRatio;
+    ctx.setLineDash([6 * devicePixelRatio, 10 * devicePixelRatio]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (active) {
+      ctx.font        = `${11 * devicePixelRatio}px sans-serif`;
+      ctx.fillStyle   = gateColors[i];
+      ctx.globalAlpha = 0.8;
+      ctx.fillText(gateLabels[i], cx + gr + 8 * devicePixelRatio, cy - 6 * devicePixelRatio);
+    }
+  });
+  ctx.globalAlpha = 1;
+
+  const ph = getPhase(progress);
+  lbl.textContent  = progress >= 1 ? 'Emission complete — output shaped' : ph.label;
+  lbl.style.color  = ph.color;
+}
+
+function drawIdle() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0a0a12';
+  ctx.fillRect(0, 0, W, H);
+  const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30 * devicePixelRatio);
+  core.addColorStop(0, '#c4b5fd');
+  core.addColorStop(1, 'rgba(196,181,253,0)');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28 * devicePixelRatio, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function animate() {
+  const spd = parseFloat(document.getElementById('speed').value);
+  t += 0.008 * spd;
+  drawFrame(Math.min(t, 1));
+  if (t < 1) { raf = requestAnimationFrame(animate); }
+  else { running = false; }
+}
+
+function restart() {
+  if (raf) cancelAnimationFrame(raf);
+  t = 0; running = true;
+  raf = requestAnimationFrame(animate);
+}
+
+cv.addEventListener('click', restart);
+drawIdle();
+</script>
+</body>
+</html>

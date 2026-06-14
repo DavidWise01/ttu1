@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokens & Embeddings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08080f;--bg2:#0c0c18;--panel:#10101e;--panel2:#13131f;--line:#1f1f33;--line2:#2a2a42;--ink:#e7e7f0;--dim:#9a9ab5;--faint:#5e5e7a;--sky:#38bdf8;--sky-d:#0ea5e9;--sky-dd:#0284c7;--cyan:#5eead4;--amber:#fbbf24;--violet:#a78bfa;--blue:#60a5fa;--red:#fb7185;--green:#86efac;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1150px 800px at 80% -15%,rgba(56,189,248,.07),transparent 58%),radial-gradient(900px 640px at -8% 106%,rgba(167,139,250,.04),transparent 55%),var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-weight:300;min-height:100vh;padding:28px 22px 56px;-webkit-font-smoothing:antialiased}
+  .shell{max-width:1160px;margin:0 auto}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--sky);margin-bottom:12px}
+  h1{font-family:'Spectral',serif;font-weight:300;font-size:clamp(26px,5vw,44px);letter-spacing:-.02em;line-height:1.04}
+  h1 em{font-style:italic;color:var(--sky)}
+  .sub{color:var(--dim);font-size:15px;margin-top:8px;max-width:790px}
+  .tabs{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+  .tab{font-family:'IBM Plex Mono',monospace;font-size:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--dim);padding:10px 15px;cursor:pointer;transition:.15s}
+  .tab:hover{border-color:var(--sky-d)} .tab.on{border-color:var(--sky);color:var(--sky);background:rgba(56,189,248,.08)}
+  .pane{display:none;margin-top:18px}.pane.on{display:block}
+  .layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+  .controls{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .sec{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+  .sec:not(:first-child){margin-top:15px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:8px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:52px;font-family:'IBM Plex Mono',monospace;font-size:10px;background:transparent;color:var(--dim);border:0;padding:8px 3px;cursor:pointer}
+  .seg button.on{background:rgba(56,189,248,.16);color:var(--sky)}
+  .btns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .btns button{flex:1;min-width:44px;font-family:'IBM Plex Mono',monospace;font-size:11px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--dim);padding:9px 4px;cursor:pointer}
+  .btns button:hover{border-color:var(--sky);color:var(--sky)}
+  .btns button.act{border-color:var(--sky);color:var(--sky);background:rgba(56,189,248,.1)}
+  .sliderrow{margin-top:13px}
+  .sliderrow .lab{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--dim);margin-bottom:5px}
+  .sliderrow .lab b{color:var(--sky)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--sky);cursor:pointer;border:2px solid #0a0a14}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--sky);cursor:pointer;border:2px solid #0a0a14}
+  .stat{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);margin-top:14px;border:1px solid var(--line);border-radius:11px;padding:10px}
+  .stat .r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line);gap:8px}
+  .stat .r:last-child{border:0} .stat .k{color:var(--faint)} .stat .v{color:var(--sky);text-align:right}
+  .stat .v.g{color:var(--green)} .stat .v.c{color:var(--cyan)} .stat .v.r{color:var(--red)} .stat .v.v{color:var(--violet)}
+  .note{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);line-height:1.55;margin-top:10px}
+  code{font-family:'IBM Plex Mono',monospace;color:var(--sky)}
+  .panel{background:#06060c;border:1px solid var(--line);border-radius:16px;position:relative;overflow:hidden;line-height:0}
+  .plabel{position:absolute;top:10px;left:14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);background:rgba(6,6,12,.4);padding:2px 6px;border-radius:4px;z-index:2}
+  canvas{display:block;width:100%;height:auto}
+  footer{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.9}
+  footer .seq{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  footer .seq span{padding:5px 12px;border:1px solid var(--line);border-radius:30px}
+  footer .seq .here{border-color:var(--sky);color:var(--sky)}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div>
+    <div class="kicker">Transformer Inference · Instrument 01 · Tokens & Embeddings</div>
+    <h1>Turning words into <em>vectors</em></h1>
+    <p class="sub">Before a model can reason, it has to convert language into numbers it can work with. Text is chopped into tokens, each token becomes a learned vector, and those vectors are arranged so that meaning lives in their geometry. Position gets folded in too — because order changes everything.</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" data-t="A">Tokenization</div>
+    <div class="tab" data-t="B">Embedding space</div>
+    <div class="tab" data-t="C">Semantic geometry</div>
+    <div class="tab" data-t="D">Positional encoding</div>
+  </div>
+
+  <!-- A -->
+  <div class="pane on" id="paneA">
+    <div class="layout">
+      <div class="controls">
+        <div class="sec">Byte-pair merges</div>
+        <div class="sliderrow"><div class="lab"><span>merges applied</span><b id="aMV">0</b></div><input type="range" id="aM" min="0" max="6" step="1" value="0"></div>
+        <div class="btns"><button id="aStep">merge ▸</button><button id="aPlay">run ▶</button><button id="aReset">reset</button></div>
+        <div class="stat" id="statA"></div>
+        <div class="note">Tokenizers are <i>learned</i>. <span style="color:var(--sky)">Byte-pair encoding</span> starts from characters and repeatedly fuses the most frequent adjacent pair into a new symbol. Common chunks become single tokens; the merges also tokenize <b>unseen</b> words from familiar pieces.</div>
+      </div>
+      <div class="panel"><canvas id="cvA" height="380"></canvas><div class="plabel" id="aLab">BPE training</div></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="pane" id="paneB">
+    <div class="layout">
+      <div class="controls">
+        <div class="sec">Pick a token</div>
+        <div class="btns" id="bWords" style="flex-direction:row;flex-wrap:wrap"></div>
+        <div class="stat" id="statB"></div>
+        <div class="note">Each token ID indexes a row of the <span style="color:var(--sky)">embedding matrix</span> — its vector. The model learns these so related meanings sit close together. Select a word to see its vector and its <b>nearest neighbors</b> in the space.</div>
+      </div>
+      <div class="panel"><canvas id="cvB" height="380"></canvas><div class="plabel" id="bLab">embedding space</div></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="pane" id="paneC">
+    <div class="layout">
+      <div class="controls">
+        <div class="sec">Analogy</div>
+        <div class="seg" id="cSel" style="flex-direction:column"><button data-a="royal" class="on">king − man + woman</button><button data-a="capital">paris − france + italy</button><button data-a="capital2">tokyo − japan + france</button></div>
+        <div class="stat" id="statC"></div>
+        <div class="note">Relationships become <span style="color:var(--sky)">directions</span>. The vector from <i>man</i> to <i>king</i> is the same as from <i>woman</i> to <i>queen</i> — so adding it to <i>woman</i> lands on <i>queen</i>. The model never stored "queen is royal female"; it fell out of the geometry.</div>
+      </div>
+      <div class="panel"><canvas id="cvC" height="380"></canvas><div class="plabel" id="cLab">analogy arithmetic</div></div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="pane" id="paneD">
+    <div class="layout">
+      <div class="controls">
+        <div class="sec">Position</div>
+        <div class="sliderrow"><div class="lab"><span>position</span><b id="dPV">5</b></div><input type="range" id="dP" min="0" max="31" step="1" value="5"></div>
+        <div class="stat" id="statD"></div>
+        <div class="note">Embeddings alone are a <b>bag</b> of vectors — "dog bites man" and "man bites dog" would look identical. <span style="color:var(--sky)">Positional encodings</span> give each slot a unique fingerprint from sinusoids of many frequencies, added to the token vector so the model knows <i>where</i> as well as <i>what</i>.</div>
+      </div>
+      <div class="panel"><canvas id="cvD" height="380"></canvas><div class="plabel" id="dLab">positional encoding</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="seq">
+      <span>00 primer</span><span class="here">01 · tokens & embeddings — you are here</span><span>02 attention</span><span>03 the transformer block</span><span>04 logits & sampling</span><span>05 training (backprop)</span><span>06 representations</span>
+    </div>
+    TOKENS & EMBEDDINGS · byte-pair encoding · the embedding space · semantic geometry · positional encoding. Verified.
+  </footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);const TAU=Math.PI*2;
+function dist(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);}
+function heat(x,px,py,w,h,arr){const n=arr.length,cw=w/n,mx=Math.max(...arr.map(Math.abs),0.01);for(let i=0;i<n;i++){const v=arr[i]/mx;const c=v>=0?[56,189,248]:[251,113,133];const a=0.18+0.72*Math.min(1,Math.abs(v));x.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${a})`;x.fillRect(px+i*cw+0.5,py,cw-1,h);}x.strokeStyle='rgba(31,31,51,.8)';x.strokeRect(px,py,w,h);}
+
+/* ===== A: BPE ===== */
+const cvA=$('cvA'),xA=cvA.getContext('2d');
+const CORPUS={low:5,lower:2,newest:6,widest:3};
+function bpeStates(corpus,nM){let words={};for(const w in corpus)words[w]=[...w.split(''),'_'];const clone=()=>{const o={};for(const w in words)o[w]=words[w].slice();return o;};const merges=[],states=[clone()];
+  for(let m=0;m<nM;m++){const pairs={};for(const w in corpus){const s=words[w],c=corpus[w];for(let i=0;i<s.length-1;i++){const p=s[i]+'\u00b7'+s[i+1];pairs[p]=(pairs[p]||0)+c;}}let best=null,bc=-1;for(const p in pairs)if(pairs[p]>bc){bc=pairs[p];best=p;}if(!best)break;const[a,b]=best.split('\u00b7');merges.push({a,b,c:bc});for(const w in corpus){const s=words[w],ns=[];for(let i=0;i<s.length;i++){if(i<s.length-1&&s[i]===a&&s[i+1]===b){ns.push(a+b);i++;}else ns.push(s[i]);}words[w]=ns;}states.push(clone());}
+  return {merges,states};}
+const BPE=bpeStates(CORPUS,6);
+function applyBPE(word,merges){let s=[...word.split(''),'_'];merges.forEach(({a,b})=>{const ns=[];for(let i=0;i<s.length;i++){if(i<s.length-1&&s[i]===a&&s[i+1]===b){ns.push(a+b);i++;}else ns.push(s[i]);}s=ns;});return s;}
+let A={m:0,play:false};
+function drawA(x,W,H){x.clearRect(0,0,W,H);const m=A.m;const st=BPE.states[m];const lastMerge=m>0?BPE.merges[m-1]:null;
+  x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('corpus  (· = word boundary)',16,22);
+  let y=44;const words=Object.keys(CORPUS);
+  words.forEach(w=>{x.fillStyle='#9a9ab5';x.font="11px 'IBM Plex Mono'";x.fillText('×'+CORPUS[w],16,y+4);
+    let px=58;st[w].forEach(sym=>{const disp=sym.replace(/_/g,'·');const tw=x.measureText(disp).width+14;const merged=lastMerge&&sym===lastMerge.a+lastMerge.b;x.fillStyle=merged?'rgba(56,189,248,.22)':'rgba(20,20,34,.7)';x.beginPath();x.roundRect(px,y-12,tw,26,5);x.fill();x.strokeStyle=merged?'#38bdf8':'rgba(60,60,80,.5)';x.lineWidth=merged?1.8:1;x.stroke();x.fillStyle=merged?'#38bdf8':'#cfcfe0';x.font="12px 'IBM Plex Mono'";x.textAlign='center';x.fillText(disp,px+tw/2,y+4);px+=tw+5;});y+=38;});
+  // merge list
+  const ly=y+10;x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('learned merges:',16,ly);
+  let lx=120,lrow=0;for(let i=0;i<m;i++){const mg=BPE.merges[i];const txt=(i+1)+'. '+mg.a.replace(/_/g,'·')+'+'+mg.b.replace(/_/g,'·');x.fillStyle=i===m-1?'#38bdf8':'#9a9ab5';x.font="10px 'IBM Plex Mono'";const tw=x.measureText(txt).width+16;if(lx+tw>W-16){lx=120;lrow++;}x.fillText(txt,lx,ly+lrow*14);lx+=tw;}
+  // generalization
+  const gen=applyBPE('lowest',BPE.merges.slice(0,m));x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.fillText('unseen "lowest" →',16,H-46);
+  let gx=130;gen.forEach(sym=>{const disp=sym.replace(/_/g,'·');const tw=x.measureText(disp).width+12;x.fillStyle='rgba(167,139,250,.16)';x.beginPath();x.roundRect(gx,H-58,tw,24,5);x.fill();x.strokeStyle='#a78bfa';x.lineWidth=1.2;x.stroke();x.fillStyle='#a78bfa';x.font="11px 'IBM Plex Mono'";x.textAlign='center';x.fillText(disp,gx+tw/2,H-42);gx+=tw+5;});
+  x.fillStyle='#5e5e7a';x.font="9px 'IBM Plex Mono'";x.textAlign='left';x.fillText('= "'+gen.join('').replace(/_/g,'')+'"  (built from learned pieces)',16,H-16);
+  const totalTokens=Object.keys(CORPUS).reduce((s,w)=>s+st[w].length,0);
+  $('aLab').textContent=m+' merges · '+(lastMerge?("'"+lastMerge.a.replace(/_/g,'·')+lastMerge.b.replace(/_/g,'·')+"'"):'characters');
+  $('statA').innerHTML=`<div class="r"><span class="k">merges applied</span><span class="v">${m} / 6</span></div>
+  ${lastMerge?`<div class="r"><span class="k">last merge</span><span class="v c">${lastMerge.a.replace(/_/g,'·')}+${lastMerge.b.replace(/_/g,'·')} (×${lastMerge.c})</span></div>`:`<div class="r"><span class="k">state</span><span class="v">characters</span></div>`}
+  <div class="r"><span class="k">corpus tokens</span><span class="v">${totalTokens}</span></div>
+  <div class="r"><span class="k">"newest"</span><span class="v" style="font-size:9px">${st['newest'].map(s=>s.replace(/_/g,'·')).join(' ')}</span></div>`;}
+$('aM').oninput=e=>{A.m=+e.target.value;$('aMV').textContent=A.m;drawA(xA,cvA.width,cvA.height);};
+$('aStep').onclick=()=>{A.m=Math.min(A.m+1,6);$('aM').value=A.m;$('aMV').textContent=A.m;drawA(xA,cvA.width,cvA.height);};
+$('aReset').onclick=()=>{A.m=0;$('aM').value=0;$('aMV').textContent=0;A.play=false;$('aPlay').classList.remove('act');$('aPlay').textContent='run ▶';drawA(xA,cvA.width,cvA.height);};
+$('aPlay').onclick=()=>{A.play=!A.play;$('aPlay').classList.toggle('act',A.play);$('aPlay').textContent=A.play?'pause ⏸':'run ▶';};
+
+/* ===== B & C: word map ===== */
+const WMAP={man:[2,2],woman:[2,4],king:[5,2],queen:[5,4],boy:[2.4,2.5],girl:[2.4,3.5],prince:[5,2.5],princess:[5,3.5],
+  cat:[2,7],dog:[3,7.2],kitten:[2.1,8],puppy:[3.1,8],
+  france:[8.5,2],paris:[8.5,4],italy:[10.5,2],rome:[10.5,4],japan:[12.5,2],tokyo:[12.5,4]};
+const WCOL={man:'#60a5fa',boy:'#60a5fa',king:'#60a5fa',prince:'#60a5fa',woman:'#fb7185',girl:'#fb7185',queen:'#fb7185',princess:'#fb7185',cat:'#fbbf24',dog:'#fbbf24',kitten:'#fbbf24',puppy:'#fbbf24',france:'#86efac',paris:'#5eead4',italy:'#86efac',rome:'#5eead4',japan:'#86efac',tokyo:'#5eead4'};
+function mapTransform(W,H){const xs=Object.values(WMAP).map(v=>v[0]),ys=Object.values(WMAP).map(v=>v[1]);const x0=Math.min(...xs)-1,x1=Math.max(...xs)+1,y0=Math.min(...ys)-1,y1=Math.max(...ys)+1;const pad=30;return {MX:p=>pad+(p[0]-x0)/(x1-x0)*(W-2*pad),MY:p=>H-pad-(p[1]-y0)/(y1-y0)*(H-2*pad)};}
+const cvB=$('cvB'),xB=cvB.getContext('2d');let B={sel:'king'};
+function drawB(x,W,H){x.clearRect(0,0,W,H);const {MX,MY}=mapTransform(W,H);
+  // nearest neighbors of sel
+  const nbrs=Object.keys(WMAP).filter(k=>k!==B.sel).map(k=>[k,dist(WMAP[B.sel],WMAP[k])]).sort((a,b)=>a[1]-b[1]).slice(0,3);
+  const nbset=new Set(nbrs.map(n=>n[0]));
+  // lines to neighbors
+  nbrs.forEach(([k])=>{x.strokeStyle='rgba(56,189,248,.35)';x.lineWidth=1.4;x.beginPath();x.moveTo(MX(WMAP[B.sel]),MY(WMAP[B.sel]));x.lineTo(MX(WMAP[k]),MY(WMAP[k]));x.stroke();});
+  for(const k in WMAP){const p=WMAP[k],seld=k===B.sel,nb=nbset.has(k);x.fillStyle=seld?'#38bdf8':(WCOL[k]||'#9a9ab5');x.beginPath();x.arc(MX(p),MY(p),seld?6:(nb?5:3.5),0,TAU);x.fill();x.fillStyle=seld?'#38bdf8':(nb?'#cfcfe0':'#7a7a92');x.font=(seld?"bold 11px":"10px")+" 'IBM Plex Mono'";x.textAlign='center';x.fillText(k,MX(p),MY(p)-9);}
+  // selected vector heat strip
+  const vec=[];for(let i=0;i<10;i++)vec.push(Math.sin(WMAP[B.sel][0]*0.7+i*0.9)*0.6+Math.cos(WMAP[B.sel][1]*0.8-i*0.6)*0.5);
+  x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('"'+B.sel+'" embedding vector:',14,H-26);heat(x,200,H-38,W-214,18,vec);
+  $('bLab').textContent='"'+B.sel+'" + nearest neighbors';
+  $('statB').innerHTML=`<div class="r"><span class="k">token</span><span class="v">${B.sel}</span></div>`+nbrs.map(([k,d],i)=>`<div class="r"><span class="k">neighbor ${i+1}</span><span class="v c">${k} (${d.toFixed(2)})</span></div>`).join('');}
+function bWordBtns(){const list=['king','queen','man','cat','paris','tokyo'];$('bWords').innerHTML=list.map(w=>`<button class="bw ${w===B.sel?'act':''}" data-w="${w}" style="flex:0 0 auto">${w}</button>`).join('');document.querySelectorAll('.bw').forEach(b=>b.onclick=()=>{B.sel=b.dataset.w;document.querySelectorAll('.bw').forEach(z=>z.classList.toggle('act',z.dataset.w===B.sel));drawB(xB,cvB.width,cvB.height);});}
+
+const cvC=$('cvC'),xC=cvC.getContext('2d');let C={a:'royal',t:0};
+const ANALOGY={royal:['king','man','woman'],capital:['paris','france','italy'],capital2:['tokyo','japan','france']};
+function drawC(x,W,H){x.clearRect(0,0,W,H);const {MX,MY}=mapTransform(W,H);const[A1,B1,C1]=ANALOGY[C.a];
+  const res=[WMAP[A1][0]-WMAP[B1][0]+WMAP[C1][0],WMAP[A1][1]-WMAP[B1][1]+WMAP[C1][1]];
+  let best=null,bd=1e9;for(const k in WMAP){if([A1,B1,C1].includes(k))continue;const d=dist(res,WMAP[k]);if(d<bd){bd=d;best=k;}}
+  const involved=new Set([A1,B1,C1,best]);
+  // all points faint
+  for(const k in WMAP){const p=WMAP[k],inv=involved.has(k);x.fillStyle=inv?(WCOL[k]||'#9a9ab5'):'rgba(90,90,120,.4)';x.beginPath();x.arc(MX(p),MY(p),inv?5:2.5,0,TAU);x.fill();if(inv){x.fillStyle=WCOL[k]||'#cfcfe0';x.font="11px 'IBM Plex Mono'";x.textAlign='center';x.fillText(k,MX(p),MY(p)-9);}}
+  // arrows: B1->A1 (relationship) and C1->result (same vector), animated
+  function arrow(p0,p1,col,t){const x0=MX(p0),y0=MY(p0),x1=MX(p1),y1=MY(p1);const ex=x0+(x1-x0)*t,ey=y0+(y1-y0)*t;x.strokeStyle=col;x.lineWidth=2;x.beginPath();x.moveTo(x0,y0);x.lineTo(ex,ey);x.stroke();const ang=Math.atan2(ey-y0,ex-x0);x.fillStyle=col;x.beginPath();x.moveTo(ex,ey);x.lineTo(ex-8*Math.cos(ang-0.4),ey-8*Math.sin(ang-0.4));x.lineTo(ex-8*Math.cos(ang+0.4),ey-8*Math.sin(ang+0.4));x.fill();}
+  const pulse=(C.t*0.4)%1.4;const t=Math.min(1,pulse);
+  arrow(WMAP[B1],WMAP[A1],'rgba(167,139,250,.85)',t);
+  arrow(WMAP[C1],res,'#38bdf8',t);
+  // result marker
+  if(t>=1){x.strokeStyle='#38bdf8';x.lineWidth=2;x.beginPath();x.arc(MX(res),MY(res),9,0,TAU);x.stroke();}
+  x.fillStyle='#38bdf8';x.font="11px 'IBM Plex Mono'";x.textAlign='left';x.fillText(A1+' − '+B1+' + '+C1+' ≈ '+best,14,H-12);x.textAlign='left';
+  $('cLab').textContent=A1+' − '+B1+' + '+C1+' = '+best;
+  $('statC').innerHTML=`<div class="r"><span class="k">relationship</span><span class="v v">${B1} → ${A1}</span></div>
+  <div class="r"><span class="k">applied to</span><span class="v">${C1}</span></div>
+  <div class="r"><span class="k">result vector</span><span class="v" style="font-size:10px">[${res.map(v=>v.toFixed(1)).join(', ')}]</span></div>
+  <div class="r"><span class="k">nearest word</span><span class="v g">${best} (${bd.toFixed(2)})</span></div>`;}
+document.querySelectorAll('#cSel button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cSel button').forEach(z=>z.classList.remove('on'));b.classList.add('on');C.a=b.dataset.a;C.t=0;drawC(xC,cvC.width,cvC.height);});
+
+/* ===== D: positional encoding ===== */
+const cvD=$('cvD'),xD=cvD.getContext('2d');const PD=16,PP=32;
+function PE(pos){const v=[];for(let i=0;i<PD;i++){const k=Math.floor(i/2),denom=Math.pow(10000,2*k/PD);v.push(i%2===0?Math.sin(pos/denom):Math.cos(pos/denom));}return v;}
+function cos(a,b){let d=0,na=0,nb=0;for(let i=0;i<a.length;i++){d+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i];}return d/(Math.sqrt(na)*Math.sqrt(nb));}
+let D={p:5};
+function drawD(x,W,H){x.clearRect(0,0,W,H);const sel=D.p;
+  // heatmap: rows=positions, cols=dims (left big area)
+  const hmW=W*0.52,hmX=44,hmY=24,hmH=H*0.62;const cw=(hmW)/PD,ch=hmH/PP;
+  for(let p=0;p<PP;p++){const vec=PE(p);for(let i=0;i<PD;i++){const v=vec[i];const c=v>=0?[56,189,248]:[251,113,133];const a=0.12+0.78*Math.abs(v);x.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${a})`;x.fillRect(hmX+i*cw,hmY+p*ch,cw+0.5,ch+0.5);}}
+  // selected row highlight
+  x.strokeStyle='#fff';x.lineWidth=1.6;x.strokeRect(hmX-1,hmY+sel*ch-0.5,hmW+2,ch+1);
+  x.fillStyle='#5e5e7a';x.font="9px 'IBM Plex Mono'";x.textAlign='right';for(let p=0;p<PP;p+=8)x.fillText(p,hmX-4,hmY+p*ch+ch);x.textAlign='center';x.fillText('dimensions →',hmX+hmW/2,hmY+hmH+14);x.save();x.translate(14,hmY+hmH/2);x.rotate(-Math.PI/2);x.fillText('position',0,0);x.restore();
+  // selected fingerprint vector
+  const rx=hmX+hmW+24,rw=W-rx-10;x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('position '+sel+' fingerprint:',rx,hmY+6);heat(x,rx,hmY+12,rw,22,PE(sel));
+  // similarity vs distance curve
+  const sy=hmY+60,sH=H*0.32;x.fillStyle='#5e5e7a';x.fillText('similarity to other positions:',rx,sy-4);x.strokeStyle='rgba(94,94,122,.4)';x.lineWidth=1;x.beginPath();x.moveTo(rx,sy+sH);x.lineTo(rx+rw,sy+sH);x.stroke();
+  x.strokeStyle='#38bdf8';x.lineWidth=2;x.beginPath();for(let p=0;p<PP;p++){const s=cos(PE(sel),PE(p));const px=rx+(p/(PP-1))*rw,py=sy+sH-((s+0.2)/1.2)*sH;p?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+  const spx=rx+(sel/(PP-1))*rw;x.fillStyle='#38bdf8';x.beginPath();x.arc(spx,sy+sH-((1+0.2)/1.2)*sH,4,0,TAU);x.fill();
+  x.fillStyle='#5e5e7a';x.font="9px 'IBM Plex Mono'";x.fillText('0',rx,sy+sH+12);x.fillText(PP-1,rx+rw-12,sy+sH+12);
+  // token + PE = input note
+  x.fillStyle='#9a9ab5';x.font="10px 'IBM Plex Mono'";x.fillText('input = token embedding + positional encoding',hmX,H-12);
+  $('dLab').textContent='position '+sel+' of '+PP;
+  $('statD').innerHTML=`<div class="r"><span class="k">position</span><span class="v">${sel}</span></div>
+  <div class="r"><span class="k">dims</span><span class="v">${PD}</span></div>
+  <div class="r"><span class="k">vs pos ${(sel+1)%PP}</span><span class="v c">${cos(PE(sel),PE((sel+1)%PP)).toFixed(3)}</span></div>
+  <div class="r"><span class="k">vs pos ${(sel+15)%PP}</span><span class="v">${cos(PE(sel),PE((sel+15)%PP)).toFixed(3)}</span></div>
+  <div class="r"><span class="k">all rows</span><span class="v g">unique ✓</span></div>`;}
+$('dP').oninput=e=>{D.p=+e.target.value;$('dPV').textContent=D.p;drawD(xD,cvD.width,cvD.height);};
+
+/* ===== tabs + loop ===== */
+let active='A';const Hts={A:380,B:380,C:380,D:380};
+function showTab(tb){active=tb;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===tb));document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));$('pane'+tb).classList.add('on');layout();}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+function sz(c,h){c.width=Math.max(340,c.parentElement.clientWidth);c.height=h;}
+function layout(){const c={A:cvA,B:cvB,C:cvC,D:cvD}[active];sz(c,Hts[active]);if(active==='A')drawA(xA,c.width,c.height);else if(active==='B')drawB(xB,c.width,c.height);else if(active==='C')drawC(xC,c.width,c.height);else drawD(xD,c.width,c.height);}
+window.addEventListener('resize',()=>{clearTimeout(window._rl);window._rl=setTimeout(layout,180);});
+bWordBtns();
+let af=0;
+function loop(){af++;
+  if(active==='A'&&A.play&&af%26===0){if(A.m>=6){A.play=false;$('aPlay').classList.remove('act');$('aPlay').textContent='run ▶';}else{A.m++;$('aM').value=A.m;$('aMV').textContent=A.m;drawA(xA,cvA.width,cvA.height);}}
+  if(active==='C'){C.t+=0.03;drawC(xC,cvC.width,cvC.height);}
+  requestAnimationFrame(loop);}
+layout();loop();
+</script>
+</body>
+</html>

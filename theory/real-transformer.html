@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Real Transformer — losses, heat & spikes</title>
+<style>
+:root{
+  --bg:#0b0e14;--panel:#141a24;--panel2:#0f141d;--ink:#eaf0f7;--body:#a9b6c6;--dim:#6a788d;--dimmer:#28323f;
+  --pri:#5ed6ff;--sec:#ffb454;--flux:#b888ff;--cu:#e8915a;--spike:#ff6b81;--heat:#ff8c42;--ok:#7cffb0;--warn:#ffd166;
+  --line:rgba(120,150,180,.13);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0c1018,#0b0e14 60%,#090c12);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased;min-height:100vh}
+header{border-bottom:1px solid var(--line);background:rgba(11,14,20,.92);position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
+.hbar{max-width:1300px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 22px}
+.brand{font-family:var(--mono);font-weight:600;letter-spacing:.1em;font-size:13px;color:var(--cu);text-transform:uppercase}.brand b{color:var(--ink)}
+.hdr-r{display:flex;align-items:center;gap:14px}
+.pstate{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}.pstate.live{color:var(--ok)}.pstate.hot{color:var(--spike)}
+#pbtn{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:rgba(124,255,176,.08);border:1px solid var(--ok);border-radius:9px;padding:9px 16px;cursor:pointer;transition:.15s}
+#pbtn:hover{background:rgba(124,255,176,.18)}#pbtn.on{color:var(--spike);border-color:var(--spike);background:rgba(255,107,129,.1)}
+#snub{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+#snub.on{color:var(--ok);border-color:var(--ok);background:rgba(124,255,176,.08)}
+main{max-width:1300px;margin:0 auto;padding:18px 22px 80px}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+@media(max-width:1040px){.layout{grid-template-columns:1fr}}
+.left{display:flex;flex-direction:column;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.row2{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel2);overflow:hidden}
+.ch{padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);background:rgba(232,145,90,.03)}
+canvas,svg{display:block;width:100%;height:auto}#cv3d{height:300px;cursor:grab}#cv3d:active{cursor:grabbing}
+.side{display:flex;flex-direction:column;gap:13px}
+.group{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:13px}
+.group h3{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.group.pri h3{color:var(--pri)}.group.sec h3{color:var(--sec)}.group.core h3{color:var(--cu)}.group.real h3{color:var(--spike)}
+.slabel{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:5px}.slabel b{color:var(--ink)}
+input[type=range]{width:100%;height:4px;margin:2px 0 10px}.pri input{accent-color:var(--pri)}.sec input{accent-color:var(--sec)}.core input{accent-color:var(--cu)}.real input{accent-color:var(--spike)}
+select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.readout{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:13px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:12px}
+.kv:last-child{border-bottom:none}.kv .k{color:var(--dim)}.kv .v{color:var(--ink);text-align:right}
+.kv .v.pri{color:var(--pri)}.kv .v.sec{color:var(--sec)}.kv .v.spike{color:var(--spike)}.kv .v.ok{color:var(--ok)}.kv .v.warn{color:var(--warn)}.kv .v.heat{color:var(--heat)}
+.verdict{font-family:var(--mono);font-size:11.5px;line-height:1.5;padding:10px 12px;border-radius:9px;border:1px solid var(--line)}
+.verdict.ok{color:var(--ok);border-color:rgba(124,255,176,.3);background:rgba(124,255,176,.06)}
+.verdict.warn{color:var(--warn);border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.06)}
+.verdict.hot{color:var(--spike);border-color:rgba(255,107,129,.4);background:rgba(255,107,129,.1)}
+.note{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.55;border-left:2px solid var(--dimmer);padding-left:10px}
+.effbar{height:10px;border-radius:5px;background:rgba(120,150,180,.12);overflow:hidden;margin:6px 0 2px}
+.effbar i{display:block;height:100%;border-radius:5px;transition:width .3s,background .3s}
+.lossrow{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;margin:5px 0}
+.lossrow .bar{flex:1;height:8px;border-radius:4px;background:rgba(120,150,180,.1);overflow:hidden}
+.lossrow .bar i{display:block;height:100%;border-radius:4px}
+.lossrow .lbl{width:64px;color:var(--dim)}.lossrow .val{width:60px;text-align:right}
+</style>
+</head>
+<body>
+<header><div class="hbar">
+  <div class="brand">⊗ Real Transformer <b>· losses &amp; spikes</b></div>
+  <div class="hdr-r"><span class="pstate" id="pstate">○ idle</span>
+    <button id="snub">snubber: off</button>
+    <button id="pbtn">⏻ energize</button></div>
+</div></header>
+<main>
+  <div class="layout">
+    <div class="left">
+      <div class="card">
+        <div class="ch">the transformer — windings heat up (glow) as they dissipate copper loss</div>
+        <canvas id="cv3d"></canvas>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <div class="ch">switch-node voltage — the leakage spike when current interrupts</div>
+          <svg id="spike" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="card">
+          <div class="ch">power & loss budget — where the watts go</div>
+          <svg id="budget" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">thermal — winding & core temperature rise from dissipation</div>
+        <svg id="thermal" viewBox="0 0 800 150" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="group core"><h3>core &amp; build</h3>
+        <select id="s-core"></select>
+        <div class="slabel" style="margin-top:8px">primary wire <b id="v-awg">26 AWG</b></div>
+        <select id="s-awg">
+          <option value="20">20 AWG (thick, low R)</option><option value="22">22 AWG</option>
+          <option value="24">24 AWG</option><option value="26" selected>26 AWG</option>
+          <option value="28">28 AWG (thin, high R)</option></select>
+      </div>
+      <div class="group pri"><h3>● primary</h3>
+        <div class="slabel">turns Np <b id="v-np">100</b></div><input type="range" id="s-np" min="5" max="400" step="5" value="100">
+        <div class="slabel">voltage <b id="v-vp">12 V</b></div><input type="range" id="s-vp" min="1" max="120" step="1" value="12">
+        <div class="slabel">frequency <b id="v-f">100 kHz</b></div><input type="range" id="s-f" min="1000" max="500000" step="1000" value="100000">
+      </div>
+      <div class="group sec"><h3>● secondary</h3>
+        <div class="slabel">turns Ns <b id="v-ns">200</b></div><input type="range" id="s-ns" min="5" max="400" step="5" value="200">
+        <div class="slabel">load <b id="v-rl">100 Ω</b></div><input type="range" id="s-rl" min="2" max="2000" step="2" value="100">
+      </div>
+      <div class="group real"><h3>● non-ideal</h3>
+        <div class="slabel">leakage (% of Lm) <b id="v-lk">3.0%</b></div><input type="range" id="s-lk" min="0.5" max="15" step="0.5" value="3">
+        <div class="slabel">switch fall time <b id="v-tf">100 ns</b></div><input type="range" id="s-tf" min="20" max="1000" step="10" value="100">
+      </div>
+      <div class="readout">
+        <div class="kv"><span class="k">Vs (ideal)</span><span class="v sec" id="o-vs">—</span></div>
+        <div class="kv"><span class="k">Rp / Rs winding</span><span class="v" id="o-rwind">—</span></div>
+        <div class="kv"><span class="k">copper loss (I²R)</span><span class="v heat" id="o-pcu">—</span></div>
+        <div class="kv"><span class="k">core loss (est.)</span><span class="v heat" id="o-pcore">—</span></div>
+        <div class="kv"><span class="k">leakage spike</span><span class="v spike" id="o-spike">—</span></div>
+        <div class="kv"><span class="k">efficiency</span><span class="v" id="o-eff">—</span></div>
+        <div class="effbar"><i id="efffill"></i></div>
+        <div class="verdict" id="o-v" style="margin-top:8px">Energize to see the losses.</div>
+      </div>
+      <div class="note">Copper loss (I²R from real wire resistance) and the leakage spike (V=L_lk·di/dt) follow directly from physics — exact. Core loss uses representative Steinmetz coefficients for type-43 material — an estimate, not a datasheet fit. The snubber clamps the spike. Heat is a simple thermal-rise model (loss × thermal resistance).</div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);const NS="http://www.w3.org/2000/svg";const mu0=4*Math.PI*1e-7,rho_cu=1.68e-8;
+const CORES={
+  "FT50-43 ferrite":{mu_r:850,Ae:0.133e-4,le:31.5e-3,Bsat:0.35,turnLen:0.025},
+  "FT82-43 ferrite":{mu_r:850,Ae:0.246e-4,le:51.8e-3,Bsat:0.35,turnLen:0.038},
+  "FT114-43 ferrite":{mu_r:850,Ae:0.375e-4,le:71.2e-3,Bsat:0.35,turnLen:0.052},
+  "T50-6 iron powder":{mu_r:8.5,Ae:0.121e-4,le:31.7e-3,Bsat:0.50,turnLen:0.025},
+};
+const AWG={20:0.812e-3,22:0.644e-3,24:0.511e-3,26:0.405e-3,28:0.321e-3};
+let coreName="FT50-43 ferrite";
+const ST={Np:100,Ns:200,Vp:12,f:100000,Rl:100,awg:26,lk:3,tf:100};
+const PWR={on:false,t:0,Twind:25,Tcore:25,snub:false}; // temps in C, ambient 25
+
+function core(){return CORES[coreName];}
+const ratio=()=>ST.Ns/ST.Np, Vs=()=>ST.Vp*ratio(), Is=()=>Vs()/ST.Rl, Ip=()=>Is()*ratio();
+function Lm(){const c=core();return ST.Np*ST.Np*mu0*c.mu_r*c.Ae/c.le;}
+function Llk(){return ST.lk/100*Lm();}
+function Bpeak(){const c=core();return ST.Vp/(ST.Np*c.Ae*2*Math.PI*ST.f);}
+function windR(N){const c=core(),d=AWG[ST.awg],A=Math.PI*(d/2)**2;return rho_cu*(N*c.turnLen)/A;}
+function Pcu(){return Ip()**2*windR(ST.Np)+Is()**2*windR(ST.Ns);}
+function Pcore(){const c=core();const k=12,a=1.3,b=2.5;const Ve_cm3=c.Ae*c.le*1e6;
+  const ld=k*Math.pow(ST.f/1000,a)*Math.pow(Math.min(Bpeak(),c.Bsat),b);return ld*Ve_cm3/1000;} // W (est)
+function spikeV(){if(PWR.snub)return ST.Vp*2.2; // snubber clamps to ~2.2x rail
+  return ST.Vp+Llk()*Ip()/(ST.tf*1e-9);}
+function Pout(){return Vs()*Is();}
+function eff(){const po=Pout();return po/(po+Pcu()+Pcore())*100;}
+
+function mk(p,a){const e=document.createElementNS(NS,p);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function tx(svg,x,y,t,c,sz,an,wt){const e=mk("text",{x,y,fill:c||"#a9b6c6","font-family":"monospace","font-size":sz||10,"text-anchor":an||"middle"});if(wt)e.setAttribute("font-weight",wt);e.textContent=t;svg.appendChild(e);}
+
+/* ---------- switch-node spike waveform ---------- */
+function drawSpike(){
+  const svg=$("#spike");svg.innerHTML="";const W=400,H=260,padL=44,padR=14,padT=18,padB=26;
+  const sp=spikeV(),vmax=Math.max(sp*1.15,ST.Vp*3);
+  const X=t=>padL+t*(W-padL-padR), Y=v=>H-padB-(v/vmax)*(H-padT-padB);
+  // rail line
+  svg.appendChild(mk("line",{x1:padL,y1:Y(ST.Vp),x2:W-padR,y2:Y(ST.Vp),stroke:"rgba(94,214,255,.4)","stroke-dasharray":"4 3"}));
+  tx(svg,padL+2,Y(ST.Vp)-4,`rail ${ST.Vp}V`,"#5ed6ff",8,"start");
+  // axis
+  svg.appendChild(mk("line",{x1:padL,y1:H-padB,x2:W-padR,y2:H-padB,stroke:"rgba(120,150,180,.2)"}));
+  tx(svg,padL-6,Y(vmax)+8,vmax.toFixed(0)+"V","#6a788d",8,"end");
+  tx(svg,padL-6,H-padB+3,"0","#6a788d",8,"end");
+  // waveform: switch on (current ramps, node at rail), then OFF -> spike, then ring/clamp
+  const phase=(PWR.t*2)%1;
+  let d=`M ${X(0)} ${Y(ST.Vp)} `;
+  // on-phase flat at rail until t=0.45
+  d+=`L ${X(0.45)} ${Y(ST.Vp)} `;
+  // spike at switch-off
+  d+=`L ${X(0.47)} ${Y(sp)} `;
+  // decay back (snubber = fast clamp, no snubber = ring)
+  if(PWR.snub){d+=`L ${X(0.52)} ${Y(ST.Vp*1.1)} L ${X(0.6)} ${Y(ST.Vp)} `;}
+  else{for(let i=0;i<=30;i++){const t=0.47+i/30*0.45;const env=Math.exp(-i/8);const ring=Math.sin(i*1.1)*env*(sp-ST.Vp)*0.4;
+    d+=`L ${X(t)} ${Y(ST.Vp+ring+ (env*(sp-ST.Vp)*0.1))} `;}}
+  d+=`L ${X(1)} ${Y(ST.Vp)}`;
+  const col=sp>ST.Vp*5?"#ff6b81":sp>ST.Vp*2.5?"#ffd166":"#7cffb0";
+  svg.appendChild(mk("path",{d,fill:"none",stroke:col,"stroke-width":2}));
+  // spike label
+  svg.appendChild(mk("circle",{cx:X(0.47),cy:Y(sp),r:3.5,fill:col}));
+  tx(svg,X(0.47)+6,Y(sp)+4,`${sp.toFixed(0)}V`,col,10,"start",700);
+  tx(svg,(padL+W)/2,H-8,PWR.snub?"snubber clamping the spike":(sp>ST.Vp*5?"⚠ spike can destroy the switch":"leakage spike at turn-off"),col,9);
+}
+
+/* ---------- loss budget bars ---------- */
+function drawBudget(){
+  const svg=$("#budget");svg.innerHTML="";const W=400,H=260;
+  const po=Pout(),pcu=Pcu(),pcore=Pcore(),ptot=po+pcu+pcore;
+  const items=[["output",po,"#7cffb0"],["copper loss",pcu,"#ff8c42"],["core loss",pcore,"#ffd166"]];
+  tx(svg,W/2,24,`total in: ${ptot.toFixed(2)} W`,"#a9b6c6",11,"middle",700);
+  let y=50;const barW=W-120;
+  items.forEach(([name,val,col])=>{
+    const frac=ptot>0?val/ptot:0;
+    tx(svg,16,y+13,name,"#a9b6c6",10,"start");
+    svg.appendChild(mk("rect",{x:120,y,width:barW,height:18,rx:4,fill:"rgba(120,150,180,.1)"}));
+    svg.appendChild(mk("rect",{x:120,y,width:Math.max(2,barW*frac),height:18,rx:4,fill:col}));
+    tx(svg,120+barW,y+13,`${val<0.1?(val*1000).toFixed(0)+"mW":val.toFixed(2)+"W"} (${(frac*100).toFixed(1)}%)`,col,9,"end");
+    y+=34;
+  });
+  // efficiency donut-ish
+  const e=eff();
+  tx(svg,W/2,y+34,`efficiency`,"#6a788d",10);
+  tx(svg,W/2,y+62,`${e.toFixed(1)}%`,e>90?"#7cffb0":e>75?"#ffd166":"#ff6b81",28,"middle",700);
+}
+
+/* ---------- thermal ---------- */
+function drawThermal(){
+  const svg=$("#thermal");svg.innerHTML="";const W=800,H=150,padL=50,padR=16,padT=16,padB=26;
+  const Tmax=120;
+  const Y=t=>H-padB-(t/Tmax)*(H-padT-padB);
+  for(const t of [25,50,75,100]){svg.appendChild(mk("line",{x1:padL,y1:Y(t),x2:W-padR,y2:Y(t),stroke:"rgba(120,150,180,.08)"}));tx(svg,padL-6,Y(t)+3,t+"°","#6a788d",9,"end");}
+  // danger zone
+  svg.appendChild(mk("line",{x1:padL,y1:Y(100),x2:W-padR,y2:Y(100),stroke:"rgba(255,107,129,.4)","stroke-dasharray":"4 3"}));
+  tx(svg,W-padR,Y(100)-4,"insulation limit ~100°C","#ff6b81",8,"end");
+  // two bars: winding temp, core temp
+  const items=[["winding",PWR.Twind,"#ff8c42",200],["core",PWR.Tcore,"#ffd166",520]];
+  items.forEach(([name,T,col,x])=>{
+    const h=Math.max(2,(T/Tmax)*(H-padT-padB));
+    const c=T>100?"#ff6b81":col;
+    svg.appendChild(mk("rect",{x:x-40,y:H-padB-h,width:80,height:h,rx:5,fill:c,opacity:.85}));
+    tx(svg,x,H-padB-h-6,`${T.toFixed(0)}°C`,c,12,"middle",700);
+    tx(svg,x,H-8,name,"#a9b6c6",10);
+  });
+  tx(svg,W/2,padT+4, PWR.on?"heating from dissipation…":"cooling to ambient", "#6a788d",9);
+}
+
+/* ---------- 3D ---------- */
+let R3=null;
+function init3d(){
+  if(!window.THREE)return;const cv=$("#cv3d");
+  const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(42,1,0.1,100);
+  sc.add(new THREE.AmbientLight(0x4a5568,0.7));const k=new THREE.DirectionalLight(0xffffff,1.0);k.position.set(5,8,6);sc.add(k);
+  const grp=new THREE.Group();sc.add(grp);
+  R3={r,sc,cam,grp,rot:{x:-0.5,y:0.5},drag:false,lx:0,ly:0,dist:9};
+  function rs(){const w=cv.clientWidth,h=cv.clientHeight||300;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  R3.rs=rs;rs();build3d();
+  cv.addEventListener('pointerdown',e=>{R3.drag=true;R3.lx=e.clientX;R3.ly=e.clientY;});
+  addEventListener('pointermove',e=>{if(!R3.drag)return;R3.rot.y+=(e.clientX-R3.lx)*0.008;R3.rot.x+=(e.clientY-R3.ly)*0.008;R3.rot.x=Math.max(-1.4,Math.min(1.4,R3.rot.x));R3.lx=e.clientX;R3.ly=e.clientY;});
+  addEventListener('pointerup',()=>R3.drag=false);
+  cv.addEventListener('wheel',e=>{e.preventDefault();R3.dist=Math.max(5,Math.min(16,R3.dist+e.deltaY*0.01));},{passive:false});
+  addEventListener('resize',rs);
+}
+function windingMesh(N,a0,a1,color,R,r){const so=r+0.12;
+  class Hx extends THREE.Curve{getPoint(t){const th=a0+(a1-a0)*t,ph=N*Math.PI*2*t;
+    return new THREE.Vector3((R+so*Math.cos(ph))*Math.cos(th),(R+so*Math.cos(ph))*Math.sin(th),so*Math.sin(ph));}}
+  const wr=Math.min(0.16,Math.max(0.04,(a1-a0)*R/Math.max(N,1)*0.3));
+  const m=new THREE.MeshStandardMaterial({color,roughness:0.3,metalness:0.85,emissive:color,emissiveIntensity:0.15});
+  return {mesh:new THREE.Mesh(new THREE.TubeGeometry(new Hx(),Math.max(120,N*16),wr,8,false),m),mat:m};
+}
+function build3d(){
+  if(!R3)return;while(R3.grp.children.length)R3.grp.remove(R3.grp.children[0]);
+  const R=2.6,r=0.8;
+  R3.coreMat=new THREE.MeshStandardMaterial({color:0x2b3340,roughness:0.5,metalness:0.4,emissive:0x101820,emissiveIntensity:0.3});
+  R3.grp.add(new THREE.Mesh(new THREE.TorusGeometry(R,r,22,80),R3.coreMat));
+  const pN=Math.max(4,Math.min(30,Math.round(ST.Np/12))), sN=Math.max(4,Math.min(30,Math.round(ST.Ns/12)));
+  const pri=windingMesh(pN,Math.PI*0.55,Math.PI*1.45,0x5ed6ff,R,r);
+  const sec=windingMesh(sN,-Math.PI*0.45,Math.PI*0.45,0xffb454,R,r);
+  R3.priMat=pri.mat;R3.secMat=sec.mat;R3.grp.add(pri.mesh);R3.grp.add(sec.mesh);
+}
+function render3d(){
+  if(!R3)return;if(!R3.drag)R3.rot.y+=0.004;R3.grp.rotation.x=R3.rot.x;R3.grp.rotation.y=R3.rot.y;
+  // winding glows toward red-hot with temperature
+  const heat=Math.max(0,Math.min(1,(PWR.Twind-25)/75));
+  if(R3.priMat){R3.priMat.emissive.setRGB(0.1+heat*0.9,0.3*(1-heat*0.3),0.5*(1-heat));R3.priMat.emissiveIntensity=0.15+heat*0.8;}
+  if(R3.secMat){R3.secMat.emissive.setRGB(0.6+heat*0.4,0.4*(1-heat*0.2),0.05);R3.secMat.emissiveIntensity=0.15+heat*0.8;}
+  const cheat=Math.max(0,Math.min(1,(PWR.Tcore-25)/75));
+  if(R3.coreMat){R3.coreMat.emissive.setRGB(0.1+cheat*0.6,0.12,0.18*(1-cheat));R3.coreMat.emissiveIntensity=0.3+cheat*0.5;}
+  R3.cam.position.set(0,0,R3.dist);R3.cam.lookAt(0,0,0);R3.r.render(R3.sc,R3.cam);
+}
+
+/* ---------- thermal integration ---------- */
+function stepThermal(dt){
+  // simple: dT/dt = (P*Rth - (T-Tamb))/tau
+  const Tamb=25, RthWind=40, RthCore=30, tau=2.0; // deg/W, seconds
+  const tgtW=Tamb+Pcu()*RthWind, tgtC=Tamb+Pcore()*RthCore;
+  if(PWR.on){PWR.Twind+=(tgtW-PWR.Twind)*dt/tau;PWR.Tcore+=(tgtC-PWR.Tcore)*dt/tau;}
+  else{PWR.Twind+=(Tamb-PWR.Twind)*dt/tau;PWR.Tcore+=(Tamb-PWR.Tcore)*dt/tau;}
+}
+
+/* ---------- ui ---------- */
+function fmtW(w){return w<0.1?(w*1000).toFixed(0)+" mW":w.toFixed(2)+" W";}
+function sync(){
+  $("#v-np").textContent=ST.Np;$("#v-ns").textContent=ST.Ns;$("#v-vp").textContent=ST.Vp+" V";
+  $("#v-f").textContent=ST.f>=1000?(ST.f/1000)+" kHz":ST.f+" Hz";$("#v-rl").textContent=ST.Rl+" Ω";
+  $("#v-awg").textContent=ST.awg+" AWG";$("#v-lk").textContent=ST.lk.toFixed(1)+"%";$("#v-tf").textContent=ST.tf+" ns";
+  $("#o-vs").textContent=`${ST.Vp}V → ${Vs().toFixed(1)}V`;
+  $("#o-rwind").textContent=`${windR(ST.Np).toFixed(3)} / ${windR(ST.Ns).toFixed(3)} Ω`;
+  $("#o-pcu").textContent=fmtW(Pcu());$("#o-pcore").textContent=fmtW(Pcore());
+  const sp=spikeV();const si=$("#o-spike");si.textContent=sp.toFixed(0)+" V";si.className="v "+(sp>ST.Vp*5?"spike":sp>ST.Vp*2.5?"warn":"ok");
+  const e=eff();$("#o-eff").textContent=e.toFixed(1)+"%";
+  const ef=$("#efffill");ef.style.width=Math.max(0,Math.min(100,e))+"%";ef.style.background=e>90?"var(--ok)":e>75?"var(--warn)":"var(--spike)";
+  const v=$("#o-v");
+  if(sp>ST.Vp*5&&!PWR.snub){v.className="verdict hot";v.textContent=`⚠ ${sp.toFixed(0)}V spike off a ${ST.Vp}V rail — ${(sp/ST.Vp).toFixed(0)}× overvoltage from leakage. A real switch dies here. Turn on the snubber or slow the fall time.`;}
+  else if(PWR.Twind>100){v.className="verdict hot";v.textContent=`⚠ Winding at ${PWR.Twind.toFixed(0)}°C — past insulation limit. Thicker wire (lower AWG) or less current.`;}
+  else if(e<80){v.className="verdict warn";v.textContent=`~ Only ${e.toFixed(0)}% efficient — losses are significant. Check copper (wire gauge) and core (frequency/flux).`;}
+  else{v.className="verdict ok";v.textContent=`✓ ${e.toFixed(1)}% efficient. Spike ${sp.toFixed(0)}V${PWR.snub?" (snubbed)":""}, winding ${PWR.Twind.toFixed(0)}°C. Clean operation.`;}
+  const ps=$("#pstate");
+  if(PWR.on){ps.className="pstate "+(PWR.Twind>100||(sp>ST.Vp*5&&!PWR.snub)?"hot":"live");ps.textContent=PWR.Twind>100?"● live · HOT":"● live";}
+  else{ps.className="pstate";ps.textContent="○ idle";}
+  build3d();drawSpike();drawBudget();drawThermal();
+}
+function populate(){const sel=$("#s-core");Object.keys(CORES).forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o);});
+  sel.value=coreName;sel.onchange=()=>{coreName=sel.value;sync();};}
+$("#s-np").oninput=e=>{ST.Np=+e.target.value;sync();};
+$("#s-ns").oninput=e=>{ST.Ns=+e.target.value;sync();};
+$("#s-vp").oninput=e=>{ST.Vp=+e.target.value;sync();};
+$("#s-f").oninput=e=>{ST.f=+e.target.value;sync();};
+$("#s-rl").oninput=e=>{ST.Rl=+e.target.value;sync();};
+$("#s-awg").onchange=e=>{ST.awg=+e.target.value;sync();};
+$("#s-lk").oninput=e=>{ST.lk=+e.target.value;sync();};
+$("#s-tf").oninput=e=>{ST.tf=+e.target.value;sync();};
+$("#snub").onclick=()=>{PWR.snub=!PWR.snub;$("#snub").textContent="snubber: "+(PWR.snub?"on":"off");$("#snub").classList.toggle("on",PWR.snub);sync();};
+$("#pbtn").onclick=()=>{PWR.on=!PWR.on;PWR.t=0;$("#pbtn").textContent=PWR.on?"⏻ power off":"⏻ energize";$("#pbtn").classList.toggle("on",PWR.on);sync();};
+
+/* boot */
+populate();if(window.THREE)init3d();sync();
+let last=performance.now();
+function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+  PWR.t+=dt;stepThermal(dt);
+  if(PWR.on)drawSpike();
+  drawThermal();render3d();
+  // refresh thermal-linked bits occasionally
+  if(Math.floor(PWR.t*4)!==loop._l){loop._l=Math.floor(PWR.t*4);$("#pstate")&&sync();}
+  requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

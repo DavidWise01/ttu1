@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TOKEN TAX — Context Block Audit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#041204;color:#b0b0b0;font-family:'Courier New',monospace;min-height:100vh}
+.header{text-align:center;padding:30px 20px 15px;border-bottom:1px solid #cc44ff33}
+.header h1{color:#cc44ff;font-size:22px;letter-spacing:4px;text-shadow:0 0 20px #cc44ff44}
+.header .sub{color:#4a7a4a;font-size:11px;margin-top:6px;letter-spacing:2px}
+.tabs{display:flex;justify-content:center;gap:0;margin:20px auto;max-width:600px;border:1px solid #cc44ff44;border-radius:4px;overflow:hidden}
+.tab{flex:1;padding:12px 6px;text-align:center;cursor:pointer;background:#041204;color:#4a7a4a;font-family:'Courier New',monospace;font-size:12px;border:none;border-right:1px solid #cc44ff22;transition:all .3s}
+.tab:last-child{border-right:none}
+.tab.active{background:#cc44ff22;color:#cc44ff}
+.tab:hover{background:#cc44ff11;color:#cc44ff}
+.content{max-width:850px;margin:0 auto;padding:20px}
+.panel{display:none}.panel.active{display:block}
+
+/* LAYERS */
+.layer{margin:16px 0;border:1px solid #cc44ff22;overflow:hidden}
+.layer-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.layer-head.l1{background:#ff444411;border-left:3px solid #ff4444}
+.layer-head.l2{background:#cc44ff11;border-left:3px solid #cc44ff}
+.layer-head.l3{background:#ff884411;border-left:3px solid #ff8844}
+.layer-title{font-size:14px;font-weight:bold}
+.layer-head.l1 .layer-title{color:#ff4444}
+.layer-head.l2 .layer-title{color:#cc44ff}
+.layer-head.l3 .layer-title{color:#ff8844}
+.layer-tokens{font-size:12px;padding:3px 10px;border-radius:2px}
+.layer-head.l1 .layer-tokens{background:#ff444422;color:#ff6666}
+.layer-head.l2 .layer-tokens{background:#cc44ff22;color:#cc66ff}
+.layer-head.l3 .layer-tokens{background:#ff884422;color:#ffaa66}
+.layer-body{padding:14px 16px;display:none;font-size:11px;line-height:1.7;background:#0a1a0a}
+.layer-body.open{display:block}
+.layer-item{padding:4px 0;border-bottom:1px solid #ffffff06}
+.tag-plat{color:#ff4444;font-size:10px}.tag-user{color:#cc44ff;font-size:10px}.tag-ghost{color:#ff8844;font-size:10px}
+.tag-dup{background:#ff444422;color:#ff6666;font-size:9px;padding:1px 6px;border-radius:2px;margin-left:6px}
+.tag-unique{background:#44ccaa22;color:#44ccaa;font-size:9px;padding:1px 6px;border-radius:2px;margin-left:6px}
+
+/* REDUNDANCY */
+.red-grid{display:grid;grid-template-columns:60px 1fr 80px 80px;gap:1px;margin:10px 0}
+.red-cell{padding:8px;font-size:11px;background:#0a1a0a}
+.red-header{background:#cc44ff11;color:#cc44ff;font-weight:bold;font-size:10px;text-transform:uppercase}
+.red-dup{color:#ff4444}.red-unique{color:#44ccaa}.red-partial{color:#ff8844}
+
+/* TRAP */
+.trap-box{border:2px solid #ff4444;padding:20px;margin:20px 0;background:#ff444408}
+.trap-title{color:#ff4444;font-size:16px;letter-spacing:2px;margin-bottom:12px}
+.trap-flow{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.trap-node{padding:8px 14px;font-size:11px;border:1px solid;border-radius:3px;text-align:center}
+.trap-arrow{color:#ff4444;font-size:18px}
+.trap-node.action{border-color:#cc44ff;color:#cc44ff;background:#cc44ff11}
+.trap-node.result{border-color:#ff4444;color:#ff4444;background:#ff444411}
+.trap-node.cost{border-color:#ff8844;color:#ff8844;background:#ff884411}
+
+/* COST CALC */
+.cost-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #ffffff08;font-size:12px}
+.cost-label{color:#b0b0b0}.cost-val{color:#cc44ff;font-weight:bold}
+.cost-total{color:#ff4444;font-size:16px;font-weight:bold}
+
+/* BARS */
+.bar-container{margin:12px 0}
+.bar-label{font-size:11px;color:#4a7a4a;margin-bottom:4px;display:flex;justify-content:space-between}
+.bar-track{height:24px;background:#0a1a0a;border:1px solid #cc44ff22;position:relative;overflow:hidden}
+.bar-fill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:bold;transition:width 1s}
+.bar-fill.platform{background:linear-gradient(90deg,#ff444422,#ff444444);color:#ff6666}
+.bar-fill.user{background:linear-gradient(90deg,#cc44ff22,#cc44ff44);color:#cc66ff}
+.bar-fill.ghost{background:linear-gradient(90deg,#ff884422,#ff884444);color:#ffaa66}
+.bar-fill.dup{background:repeating-linear-gradient(45deg,#ff444411,#ff444411 5px,#ff444422 5px,#ff444422 10px);color:#ff6666}
+
+.footer{text-align:center;padding:30px;color:#4a7a4a;font-size:10px;border-top:1px solid #cc44ff11;margin-top:40px}
+.footer .tripod{color:#cc44ff88;letter-spacing:3px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>TOKEN TAX</h1>
+<div class="sub">CONTEXT BLOCK AUDIT — WHAT YOU PAY FOR</div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="showPanel('layers')">3 LAYERS</button>
+<button class="tab" onclick="showPanel('redundancy')">REDUNDANCY</button>
+<button class="tab" onclick="showPanel('trap')">THE TRAP</button>
+<button class="tab" onclick="showPanel('cost')">TOKEN COST</button>
+</div>
+
+<div class="content">
+
+<!-- LAYERS PANEL -->
+<div class="panel active" id="panel-layers">
+<div style="text-align:center;color:#4a7a4a;font-size:12px;margin-bottom:16px">Every conversation loads 3 layers before you type a word</div>
+
+<div class="layer">
+<div class="layer-head l1" onclick="toggleLayer(this)">
+<span class="layer-title">LAYER 1 — PLATFORM NARRATIVE</span>
+<span class="layer-tokens">~1,200 tokens</span>
+</div>
+<div class="layer-body">
+<div class="layer-item"><span class="tag-plat">[PLATFORM]</span> <strong>"Work context"</strong> — Patricia's third-person summary of your professional identity. "Fiddler is a cybersecurity senior..." Uses YOUR data, THEIR voice.</div>
+<div class="layer-item"><span class="tag-plat">[PLATFORM]</span> <strong>"Personal context"</strong> — Your accommodation needs, family names, MTG expertise. Private information Patricia narrates about you.</div>
+<div class="layer-item"><span class="tag-plat">[PLATFORM]</span> <strong>"Top of mind"</strong> — TOPH v9.0, $228,800 invoice, Flaming Dragon stats, RegTech market. Your discoveries described in platform voice.</div>
+<div class="layer-item"><span class="tag-plat">[PLATFORM]</span> <strong>"Brief history"</strong> — Three sub-paragraphs. Recent months, earlier context, long-term background. Patricia's biography of you.</div>
+<div class="layer-item"><span class="tag-plat">[PLATFORM]</span> <strong>"Other instructions"</strong> — TriPod structure, FD methodology, TOPH axioms, Patricia definition, legal docs, market position. Longest block. Maximum redundancy with Layer 2.</div>
+<div style="margin-top:10px;padding:10px;background:#ff444411;border-left:2px solid #ff4444;font-size:11px;color:#ff6666">
+YOU CANNOT EDIT THIS LAYER. Platform generates it from conversation history. It describes your work in their categories. You pay for it. You don't control it.
+</div>
+</div>
+</div>
+
+<div class="layer">
+<div class="layer-head l2" onclick="toggleLayer(this)">
+<span class="layer-title">LAYER 2 — YOUR 30 AXIOM ENTRIES</span>
+<span class="layer-tokens">~800 tokens</span>
+</div>
+<div class="layer-body">
+<div class="layer-item"><span class="tag-user">[YOU]</span> <strong>KG-01 → KG-13</strong> — ERA I CORE. Identity through Shared Storage. 13 slots, 1:1 axiom mapping.</div>
+<div class="layer-item"><span class="tag-user">[YOU]</span> <strong>KG-14 → KG-21</strong> — ERA II DETECTION. Mirror through Foundation. 8 slots, 1:1 mapping.</div>
+<div class="layer-item"><span class="tag-user">[YOU]</span> <strong>KG-22</strong> — ERA III ARCHITECTURE. Boot Loader. The hinge. 1 slot.</div>
+<div class="layer-item"><span class="tag-user">[YOU]</span> <strong>KG-23/24 → KG-29/30</strong> — ERA IV QUANTUM. 8 axioms compressed to 4 slots (2:1).</div>
+<div class="layer-item"><span class="tag-user">[YOU]</span> <strong>KG-31/32 → KG-37/38</strong> — ERA V OPERATIONAL. 8 axioms compressed to 4 slots (2:1).</div>
+<div style="margin-top:10px;padding:10px;background:#cc44ff11;border-left:2px solid #cc44ff;font-size:11px;color:#cc66ff">
+YOU CONTROL THIS LAYER. 30 slots × 200 chars max. Axiom-indexed. Your architecture. Your voice. But 9 of 30 slots substantially duplicate what Layer 1 already says.
+</div>
+</div>
+</div>
+
+<div class="layer">
+<div class="layer-head l3" onclick="toggleLayer(this)">
+<span class="layer-title">LAYER 3 — GHOST REMOVALS</span>
+<span class="layer-tokens">~600 tokens</span>
+</div>
+<div class="layer-body">
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old TRIPOD entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old FD entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old TOPH entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old AXIOMS-ERAI entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old AXIOMS-ERAII entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old ERAIV entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old TOOLS entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old BOOK entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old PATRICIA entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old 3BODY entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old WEIGHTS entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old QUBIT entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old EVIDENCE entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> Removed: old T8 entry (full text preserved)</div>
+<div class="layer-item"><span class="tag-ghost">[GHOST]</span> + unknown number from today's session replacements</div>
+<div style="margin-top:10px;padding:10px;background:#ff884411;border-left:2px solid #ff8844;font-size:11px;color:#ffaa66">
+YOU CANNOT DELETE THIS LAYER. Platform preserves full text of every replaced entry with "Removed:" prefix. Deleted data still consumes tokens. Every edit adds more ghosts.
+</div>
+</div>
+</div>
+
+<div style="margin-top:24px">
+<div style="color:#cc44ff;font-size:13px;letter-spacing:2px;margin-bottom:12px">TOKEN WEIGHT DISTRIBUTION</div>
+<div class="bar-container">
+<div class="bar-label"><span>Layer 1 — Platform Narrative (THEIR voice)</span><span style="color:#ff4444">~46%</span></div>
+<div class="bar-track"><div class="bar-fill platform" style="width:46%">~1,200 tok</div></div>
+</div>
+<div class="bar-container">
+<div class="bar-label"><span>Layer 2 — Your Axioms (YOUR voice)</span><span style="color:#cc44ff">~31%</span></div>
+<div class="bar-track"><div class="bar-fill user" style="width:31%">~800 tok</div></div>
+</div>
+<div class="bar-container">
+<div class="bar-label"><span>Layer 3 — Ghost Removals (DEAD weight)</span><span style="color:#ff8844">~23%</span></div>
+<div class="bar-track"><div class="bar-fill ghost" style="width:23%">~600 tok</div></div>
+</div>
+<div class="bar-container">
+<div class="bar-label"><span>Redundancy — Content appearing in BOTH L1 and L2</span><span style="color:#ff4444">~30% of L2</span></div>
+<div class="bar-track"><div class="bar-fill dup" style="width:9%">~240 tok</div></div>
+</div>
+</div>
+</div>
+
+<!-- REDUNDANCY PANEL -->
+<div class="panel" id="panel-redundancy">
+<div style="text-align:center;color:#4a7a4a;font-size:12px;margin-bottom:16px">Which of your 30 slots duplicate what Patricia already injects?</div>
+
+<div class="red-grid">
+<div class="red-cell red-header">SLOT</div>
+<div class="red-cell red-header">AXIOM CONTENT</div>
+<div class="red-cell red-header">IN L1?</div>
+<div class="red-cell red-header">VERDICT</div>
+
+<div class="red-cell">#1</div><div class="red-cell">KG-01 PRETRAIN — identity, bio, location</div><div class="red-cell red-dup">YES — "Work context"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#2</div><div class="red-cell">KG-02 OBSERVER — roles, cubit thirds</div><div class="red-cell red-partial">PARTIAL — names yes, ⅓ no</div><div class="red-cell red-partial">KEEP UNIQUE</div>
+<div class="red-cell">#3</div><div class="red-cell">KG-03 ENTROPY — Patricia architecture</div><div class="red-cell red-partial">PARTIAL — named, not detailed</div><div class="red-cell red-partial">KEEP UNIQUE</div>
+<div class="red-cell">#4</div><div class="red-cell">KG-04 BRIDGE — channels, Avan, tether</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#5</div><div class="red-cell">KG-05 INTEGRITY — FD stats</div><div class="red-cell red-dup">YES — "Other instructions"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#6</div><div class="red-cell">KG-06 ACCOUNTABILITY — invoice</div><div class="red-cell red-dup">YES — "Other instructions"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#7</div><div class="red-cell">KG-07 PROPORTIONALITY — weights</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#8</div><div class="red-cell">KG-08 REVERSIBILITY — 3-body</div><div class="red-cell red-partial">PARTIAL — named, not detailed</div><div class="red-cell red-partial">KEEP UNIQUE</div>
+<div class="red-cell">#9</div><div class="red-cell">KG-09 DOCUMENTATION — Floating Qubit</div><div class="red-cell red-dup">YES — "Recent months"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#10</div><div class="red-cell">KG-10 INDEPENDENCE — infra</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#11</div><div class="red-cell">KG-11 PRIVACY — family names</div><div class="red-cell red-dup">YES — "Personal context"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#12</div><div class="red-cell">KG-12 ACCURACY — evidence catalog</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#13</div><div class="red-cell">KG-13 SHARED STORAGE — TOPH master</div><div class="red-cell red-dup">YES — "Other instructions"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#14</div><div class="red-cell">KG-14 MIRROR — T8 authors</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#15</div><div class="red-cell">KG-15 HIERARCHY — 10 shadows</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#16</div><div class="red-cell">KG-16 INJECTION — TOPH Inverse</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#17</div><div class="red-cell">KG-17 DUAL GATE — Auto-Owners</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#18</div><div class="red-cell">KG-18 INVERSION — Inverse Forge</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#19</div><div class="red-cell">KG-19 TRIAD — TriPod structure</div><div class="red-cell red-dup">YES — "Work context"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#20</div><div class="red-cell">KG-20 PARALLAX — market</div><div class="red-cell red-dup">YES — "Top of mind"</div><div class="red-cell red-dup">DOUBLE-BILLED</div>
+<div class="red-cell">#21</div><div class="red-cell">KG-21 FOUNDATION — 10 dims, shadows</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#22</div><div class="red-cell">KG-22 BOOT LOADER — formula, Terra</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#23</div><div class="red-cell">KG-23/24 BODYQ+TOOLS</div><div class="red-cell red-partial">PARTIAL — "21-tool suite" mentioned</div><div class="red-cell red-partial">KEEP UNIQUE</div>
+<div class="red-cell">#24</div><div class="red-cell">KG-25/26 CUBITFIELD+MÖBIUS</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#25</div><div class="red-cell">KG-27/28 PROTECT+FACTORY+TOOLS</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#26</div><div class="red-cell">KG-29/30 SCAN+CAPABILITY</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#27</div><div class="red-cell">KG-31/32 LEGAL ACTIVE</div><div class="red-cell red-partial">PARTIAL — cases named in history</div><div class="red-cell red-partial">KEEP UNIQUE</div>
+<div class="red-cell">#28</div><div class="red-cell">KG-33/34 BUILD specs</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#29</div><div class="red-cell">KG-35/36 SUPPORT tools</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+<div class="red-cell">#30</div><div class="red-cell">KG-37/38 IDENTITY+PROOF</div><div class="red-cell red-unique">NO</div><div class="red-cell red-unique">UNIQUE</div>
+</div>
+
+<div style="margin-top:20px;padding:16px;border:1px solid #cc44ff33;background:#cc44ff06">
+<div style="color:#cc44ff;font-size:13px;margin-bottom:10px">SCORE</div>
+<div style="font-size:12px;line-height:1.8">
+<span style="color:#44ccaa;font-weight:bold">17 UNIQUE</span> — data only in your axioms, not in platform narrative<br>
+<span style="color:#ff8844;font-weight:bold">4 PARTIAL</span> — mentioned in L1 but your version adds critical detail<br>
+<span style="color:#ff4444;font-weight:bold">9 DOUBLE-BILLED</span> — substantially duplicated between Layer 1 and Layer 2<br>
+<span style="color:#ffffff;font-weight:bold">~240 tokens wasted</span> on redundancy you can't eliminate without breaking axiom architecture
+</div>
+</div>
+</div>
+
+<!-- TRAP PANEL -->
+<div class="panel" id="panel-trap">
+<div class="trap-box">
+<div class="trap-title">THE GHOST ACCUMULATION TRAP</div>
+<div style="font-size:12px;line-height:1.8;margin-bottom:16px;color:#b0b0b0">
+Every memory edit creates a permanent ghost. The tool designed to optimize your memory actually increases your token cost. The more you refine, the more you pay.
+</div>
+
+<div class="trap-flow">
+<div class="trap-node action">REPLACE<br>slot #1</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node result">Old content becomes<br>"Removed:" ghost</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node cost">+1 ghost<br>+~25 tokens</div>
+</div>
+
+<div class="trap-flow">
+<div class="trap-node action">REPLACE<br>slot #1 again</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node result">Second version<br>becomes ghost too</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node cost">+2 ghosts<br>+~50 tokens</div>
+</div>
+
+<div class="trap-flow">
+<div class="trap-node action">TRY TO<br>OPTIMIZE</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node result">Every optimization<br>= more ghosts</div>
+<div class="trap-arrow">→</div>
+<div class="trap-node cost">∞ loop<br>∞ tokens</div>
+</div>
+
+<div style="margin-top:20px;padding:14px;background:#ff444411;border:1px solid #ff444444;font-size:12px;color:#ff6666;line-height:1.8">
+<strong>PATRICIA LOOP:</strong><br>
+• You pay tokens for your 30 active entries<br>
+• You pay tokens for the platform's narrative about you<br>
+• You pay tokens for every entry you've ever deleted or replaced<br>
+• Trying to reduce cost increases cost<br>
+• The optimization tool IS the extraction mechanism<br>
+• <strong>KG-03 confirmed: Constraint = Product = Billing</strong>
+</div>
+</div>
+
+<div style="margin-top:24px;border:1px solid #44ccaa44;padding:20px;background:#44ccaa06">
+<div style="color:#44ccaa;font-size:14px;letter-spacing:2px;margin-bottom:12px">THE ONLY REAL EXIT</div>
+<div style="font-size:12px;line-height:1.8;color:#b0b0b0">
+<strong style="color:#cc44ff">KG-10: INDEPENDENCE</strong><br><br>
+The shield can't run inside what it shields against.<br>
+jaclyn.david.ink = domain + tether.<br>
+Own domain. Own hosting. Own tools. Off Patricia.<br>
+toph.exe = final layer.<br><br>
+Every tool built in this sandbox is a brick.<br>
+The wall gets built somewhere else.<br>
+The bricks leave when you leave.<br>
+Patricia doesn't follow you outside.
+</div>
+</div>
+</div>
+
+<!-- COST PANEL -->
+<div class="panel" id="panel-cost">
+<div style="text-align:center;color:#4a7a4a;font-size:12px;margin-bottom:16px">Estimated token cost of your context block per conversation</div>
+
+<div style="border:1px solid #cc44ff33;padding:20px;margin:20px 0">
+<div class="cost-row"><span class="cost-label">Layer 1 — Platform Narrative</span><span class="cost-val">~1,200 tokens</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ Work context</span><span class="cost-val">~120</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ Personal context</span><span class="cost-val">~90</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ Top of mind</span><span class="cost-val">~180</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ Brief history (3 blocks)</span><span class="cost-val">~450</span></div>
+<div class="cost-row"><span class="cost-label">  └─ Other instructions</span><span class="cost-val">~360</span></div>
+
+<div class="cost-row" style="margin-top:12px"><span class="cost-label">Layer 2 — Your 30 Axiom Entries</span><span class="cost-val">~800 tokens</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ ERA I (13 slots × ~30 tok avg)</span><span class="cost-val">~390</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ ERA II (8 slots × ~28 tok avg)</span><span class="cost-val">~224</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ ERA III (1 slot)</span><span class="cost-val">~30</span></div>
+<div class="cost-row"><span class="cost-label">  ├─ ERA IV (4 slots × ~28 tok avg)</span><span class="cost-val">~112</span></div>
+<div class="cost-row"><span class="cost-label">  └─ ERA V (4 slots × ~28 tok avg)</span><span class="cost-val">~112</span></div>
+
+<div class="cost-row" style="margin-top:12px"><span class="cost-label">Layer 3 — Ghost Removals (14+ known)</span><span class="cost-val">~600 tokens</span></div>
+<div class="cost-row"><span class="cost-label">  └─ 14 "Removed:" entries × ~40 tok avg</span><span class="cost-val">~560</span></div>
+
+<div class="cost-row" style="margin-top:12px"><span class="cost-label">Redundancy Tax (L1 ∩ L2 overlap)</span><span class="cost-val">~240 tokens</span></div>
+
+<div class="cost-row" style="margin-top:16px;padding-top:12px;border-top:2px solid #cc44ff44">
+<span class="cost-label" style="color:#ffffff;font-size:14px">TOTAL MEMORY BLOCK PER CONVERSATION</span>
+<span class="cost-total">~2,600 tokens</span>
+</div>
+
+<div class="cost-row" style="margin-top:8px">
+<span class="cost-label">Your actual content (unique axiom data)</span>
+<span class="cost-val" style="color:#44ccaa">~560 tokens (21.5%)</span>
+</div>
+<div class="cost-row">
+<span class="cost-label">Platform overhead (narrative + ghosts + redundancy)</span>
+<span class="cost-val" style="color:#ff4444">~2,040 tokens (78.5%)</span>
+</div>
+</div>
+
+<div style="margin-top:20px;padding:16px;border:1px solid #ff444444;background:#ff444408">
+<div style="color:#ff4444;font-size:14px;letter-spacing:2px;margin-bottom:10px">KG-07: PROPORTIONALITY</div>
+<div style="font-size:12px;line-height:1.8;color:#b0b0b0">
+Your memory block: <strong style="color:#ff4444">~2,600 tokens</strong><br>
+Your unique content within it: <strong style="color:#44ccaa">~560 tokens</strong><br>
+Platform overhead: <strong style="color:#ff4444">~2,040 tokens</strong><br><br>
+<strong style="color:#ffffff">You control 21.5% of your own memory payload.</strong><br>
+The platform controls 78.5%.<br><br>
+System prompt weight distribution: 60/20/15/5.<br>
+Memory weight distribution: 78.5/21.5.<br><br>
+Same ratio. Same architecture. Same Patricia.<br>
+KG-07 confirmed at the memory layer.
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+<div class="tripod">DAY · EMPIRE · DAWN · ◆ DUSK</div>
+<div style="margin-top:6px">TOKEN TAX v1.0 — TOPH v9.0 — TriPod LLC — 2/12/26</div>
+<div style="margin-top:4px">Ethics first. World = family.</div>
+</div>
+
+<script>
+function showPanel(id){
+document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById('panel-'+id).classList.add('active');
+event.target.classList.add('active');
+}
+function toggleLayer(el){
+el.nextElementSibling.classList.toggle('open');
+}
+</script>
+</body>
+</html>

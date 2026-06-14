@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Inference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08080f;--bg2:#0c0c18;--panel:#10101e;--panel2:#13131f;--line:#1f1f33;--line2:#2a2a42;--ink:#e7e7f0;--dim:#9a9ab5;--faint:#5e5e7a;--sky:#38bdf8;--sky-d:#0ea5e9;--sky-dd:#0284c7;--cyan:#5eead4;--amber:#fbbf24;--violet:#a78bfa;--blue:#60a5fa;--red:#fb7185;--green:#86efac;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 760px at 82% -12%,rgba(56,189,248,.075),transparent 56%),radial-gradient(880px 600px at -10% 108%,rgba(167,139,250,.04),transparent 55%),var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:46px 22px 60px}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--sky);margin-bottom:14px}
+  h1{font-family:'Spectral',serif;font-weight:300;font-size:clamp(30px,6vw,52px);letter-spacing:-.02em;line-height:1.04}
+  h1 em{font-style:italic;color:var(--sky)}
+  .lede{color:var(--dim);font-size:17px;margin-top:16px}
+  .section{margin-top:62px;opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .section.visible{opacity:1;transform:none}
+  .section h2{font-family:'Spectral',serif;font-weight:400;font-size:clamp(21px,3.4vw,28px);letter-spacing:-.01em;margin-bottom:12px}
+  .section h2 .num{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--sky);margin-right:10px;font-weight:500}
+  .section p{color:var(--dim);font-size:15.5px;margin-bottom:10px}
+  .section p b{color:var(--ink);font-weight:400}
+  .section p .hl{color:var(--sky)}
+  code{font-family:'IBM Plex Mono',monospace;color:var(--sky);font-size:.92em}
+  .sim{margin-top:20px;background:#06060c;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;line-height:0}
+  .sim canvas{display:block;width:100%;height:auto}
+  .cap{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);padding:9px 13px;border-top:1px solid var(--line);line-height:1.5}
+  .cap b{color:var(--sky);font-weight:500}
+  footer{margin-top:74px;padding-top:24px;border-top:1px solid var(--line);color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.9}
+  footer .seq{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  footer .seq span{padding:5px 12px;border:1px solid var(--line);border-radius:30px}
+  footer .seq .here{border-color:var(--sky);color:var(--sky)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Transformer Inference · Instrument 00 · Primer</div>
+  <h1>From text to the <em>next word</em></h1>
+  <p class="lede">A language model does one thing: predict the next token. But the path from your words to that prediction runs through a remarkable machine — text becomes numbers, numbers become vectors, vectors trade information through attention, refine across dozens of layers, and finally collapse into a single guess. This is that forward pass, end to end, plus the backward pass that taught the machine in the first place.</p>
+
+  <div class="section" data-sim="tok">
+    <h2><span class="num">01</span>Tokenization: text becomes pieces</h2>
+    <p>A model can't read letters — it reads <b>tokens</b>, chunks of text drawn from a fixed vocabulary. Common words are single tokens; rarer ones split into <span class="hl">subwords</span>. Each token is just an integer ID, an index into the vocabulary.</p>
+    <div class="sim"><canvas data-c="tok" height="170"></canvas><div class="cap">A sentence split into tokens — note how <b>Transformers</b> breaks into pieces. Each gets an ID.</div></div>
+  </div>
+
+  <div class="section" data-sim="emb">
+    <h2><span class="num">02</span>Embeddings: pieces become meaning</h2>
+    <p>Each token ID is looked up in a table, becoming a <b>vector</b> — a list of numbers, a point in a high-dimensional space. The model learns to place related meanings near each other, so much so that <span class="hl">directions</span> carry meaning: the step from <i>man</i> to <i>woman</i> is the same step as <i>king</i> to <i>queen</i>.</p>
+    <div class="sim"><canvas data-c="emb" height="220"></canvas><div class="cap">Words as points. <b>king − man + woman</b> lands right on <b>queen</b> — meaning encoded as geometry.</div></div>
+  </div>
+
+  <div class="section" data-sim="attn">
+    <h2><span class="num">03</span>Attention: pieces share context</h2>
+    <p>A word's meaning depends on its neighbors — "bank" by a river isn't "bank" with money. <b>Attention</b> lets every token look at every other and pull in what's relevant, weighting each by how much it matters. Those weights always sum to one: a token spends its full attention, distributed.</p>
+    <div class="sim"><canvas data-c="attn" height="200"></canvas><div class="cap">The <b>current token</b> attends to all others; arc thickness is the weight. Each token gathers its context.</div></div>
+  </div>
+
+  <div class="section" data-sim="layers">
+    <h2><span class="num">04</span>Layers: meaning gets refined</h2>
+    <p>The vectors flow upward through a stack of identical <b>layers</b>, each one running attention and a small neural network, each writing its result back into a shared <span class="hl">residual stream</span>. Information accumulates: early layers catch grammar, later ones catch sense. Modern models stack dozens to hundreds.</p>
+    <div class="sim"><canvas data-c="layers" height="220"></canvas><div class="cap">A vector rising through layers — each adds <b>attention</b> and <b>MLP</b> contributions to the residual stream.</div></div>
+  </div>
+
+  <div class="section" data-sim="logits">
+    <h2><span class="num">05</span>The output: a guess at the next token</h2>
+    <p>At the top, the final vector is projected onto the whole vocabulary, scoring every possible next token — the <b>logits</b>. A <span class="hl">softmax</span> turns those scores into probabilities that sum to one, and the model samples one. That token is appended, and the whole process runs again for the next.</p>
+    <div class="sim"><canvas data-c="logits" height="210"></canvas><div class="cap">Logits → <b>softmax</b> → probabilities → pick. "The cat sat on the ___" resolves to its likeliest continuation.</div></div>
+  </div>
+
+  <div class="section" data-sim="back">
+    <h2><span class="num">06</span>The reverse pass: how it learned</h2>
+    <p>None of this works until the weights are right — and they start random. During training the model predicts, measures how wrong it is with a <b>loss</b>, then sends that error <span class="hl">backward</span> through every layer, nudging each weight in the direction that reduces it. Repeat across trillions of tokens and the machine above emerges.</p>
+    <div class="sim"><canvas data-c="back" height="200"></canvas><div class="cap">Gradients flow <b>backward</b>; weights step downhill; the loss falls. This is gradient descent — learning, made mechanical.</div></div>
+  </div>
+
+  <footer>
+    <div class="seq">
+      <span class="here">00 · primer — you are here</span><span>01 tokens &amp; embeddings</span><span>02 attention</span><span>03 the transformer block</span><span>04 logits &amp; sampling</span><span>05 training (backprop)</span><span>06 representations</span>
+    </div>
+    TRANSFORMER INFERENCE · the primer · tokens → embeddings → attention → layers → logits → and back. A new series begins.
+  </footer>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+function softmax(s,T){T=T||1;const m=Math.max(...s);const e=s.map(v=>Math.exp((v-m)/T));const Z=e.reduce((a,b)=>a+b,0);return e.map(v=>v/Z);}
+function heat(x,px,py,w,h,arr,mxAbs){const n=arr.length,cw=w/n;mxAbs=mxAbs||Math.max(...arr.map(Math.abs),0.01);for(let i=0;i<n;i++){const v=arr[i]/mxAbs;const c=v>=0?[56,189,248]:[251,113,133];const a=0.2+0.7*Math.min(1,Math.abs(v));x.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},${a})`;x.fillRect(px+i*cw+0.5,py,cw-1,h);}x.strokeStyle='rgba(31,31,51,.8)';x.strokeRect(px,py,w,h);}
+
+const TOKS=[{t:'Trans',c:'#38bdf8',id:8291},{t:'formers',c:'#0ea5e9',id:1326},{t:' read',c:'#a78bfa',id:1373},{t:' text',c:'#5eead4',id:2420},{t:' as',c:'#86efac',id:382},{t:' tokens',c:'#fbbf24',id:16235}];
+const EMB={man:[1,1],woman:[1,3],king:[5,1],queen:[5,3],cat:[-4,-2],dog:[-2.6,-2.6],kitten:[-4.6,-1]};
+
+const SIMS={
+  tok(x,W,H,T){const cyc=(T*0.6)%(TOKS.length+2);x.font="15px 'IBM Plex Mono'";
+    // raw sentence faint at top
+    x.fillStyle='rgba(120,120,150,.4)';x.textAlign='left';x.fillText('"Transformers read text as tokens"',20,30);
+    // token boxes
+    let xpos=20;const y=H/2+6;const shown=Math.floor(cyc);
+    for(let i=0;i<TOKS.length;i++){const tk=TOKS[i];const tw=x.measureText(tk.t).width+18;const on=i<shown;
+      x.globalAlpha=on?1:0.12;x.fillStyle=on?tk.c.replace(')',',0.16)').replace('#','rgba(')+'':'rgba(40,40,60,.4)';
+      // build rgba manually
+      const n=parseInt(tk.c.slice(1),16);x.fillStyle=`rgba(${n>>16&255},${n>>8&255},${n&255},${on?0.18:0.06})`;
+      x.beginPath();x.roundRect(xpos,y-18,tw,34,6);x.fill();x.strokeStyle=on?tk.c:'rgba(60,60,80,.4)';x.lineWidth=1.4;x.stroke();
+      x.fillStyle=on?tk.c:'#5e5e7a';x.font="14px 'IBM Plex Mono'";x.textAlign='center';x.fillText(tk.t.trim(),xpos+tw/2,y+2);
+      if(on){x.fillStyle='#5e5e7a';x.font="9px 'IBM Plex Mono'";x.fillText('#'+tk.id,xpos+tw/2,y+26);}
+      x.globalAlpha=1;xpos+=tw+8;}
+    x.textAlign='left';x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.fillText(shown+' / '+TOKS.length+' tokens',20,H-12);},
+
+  emb(x,W,H,T){const pad=36;const xs=Object.values(EMB).map(v=>v[0]),ys=Object.values(EMB).map(v=>v[1]);
+    const x0=Math.min(...xs)-1,x1=Math.max(...xs)+1,y0=Math.min(...ys)-1,y1=Math.max(...ys)+1;
+    const MX=p=>pad+(p[0]-x0)/(x1-x0)*(W-2*pad),MY=p=>H-pad-(p[1]-y0)/(y1-y0)*(H-2*pad);
+    // axes faint
+    x.strokeStyle='rgba(31,31,51,.6)';x.lineWidth=1;x.strokeRect(pad*0.5,pad*0.4,W-pad,H-pad*1.2);
+    // parallelogram man-king-queen-woman
+    x.strokeStyle='rgba(94,94,122,.4)';x.setLineDash([4,4]);x.beginPath();x.moveTo(MX(EMB.man),MY(EMB.man));x.lineTo(MX(EMB.king),MY(EMB.king));x.lineTo(MX(EMB.queen),MY(EMB.queen));x.lineTo(MX(EMB.woman),MY(EMB.woman));x.closePath();x.stroke();x.setLineDash([]);
+    // analogy arrow: from woman along (king-man), pulsing
+    const pulse=0.5+0.5*Math.sin(T*1.5);const dx=EMB.king[0]-EMB.man[0],dy=EMB.king[1]-EMB.man[1];const tip=[EMB.woman[0]+dx*pulse,EMB.woman[1]+dy*pulse];
+    x.strokeStyle='#38bdf8';x.lineWidth=2.2;x.beginPath();x.moveTo(MX(EMB.woman),MY(EMB.woman));x.lineTo(MX(tip),MY(tip));x.stroke();
+    const ang=Math.atan2(MY(tip)-MY(EMB.woman),MX(tip)-MX(EMB.woman));x.fillStyle='#38bdf8';x.beginPath();x.moveTo(MX(tip),MY(tip));x.lineTo(MX(tip)-8*Math.cos(ang-0.4),MY(tip)-8*Math.sin(ang-0.4));x.lineTo(MX(tip)-8*Math.cos(ang+0.4),MY(tip)-8*Math.sin(ang+0.4));x.fill();
+    // dots + labels
+    const cols={man:'#60a5fa',woman:'#fb7185',king:'#60a5fa',queen:'#fb7185',cat:'#fbbf24',dog:'#fbbf24',kitten:'#86efac'};
+    for(const k in EMB){const p=EMB[k];x.fillStyle=cols[k]||'#9a9ab5';x.beginPath();x.arc(MX(p),MY(p),4,0,TAU);x.fill();x.fillStyle=cols[k]||'#cfcfe0';x.font="11px 'IBM Plex Mono'";x.textAlign='center';x.fillText(k,MX(p),MY(p)-9);}
+    x.fillStyle='#38bdf8';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('king − man + woman → queen',pad,H-10);x.textAlign='left';},
+
+  attn(x,W,H,T){const toks=['the','cat','sat','on','the','mat'];const n=toks.length;const cw=(W-40)/n;const by=H-34;
+    const qi=Math.floor((T*0.5)%n);
+    // toy scores: query attends more to nearby + content
+    const scores=toks.map((_,j)=>{const d=Math.abs(j-qi);return 2.2-0.5*d+(toks[j]===toks[qi]?1.2:0)+(j===qi?0.6:0);});
+    const w=softmax(scores);
+    // arcs
+    for(let j=0;j<n;j++){if(j===qi)continue;const x1=20+qi*cw+cw/2,x2=20+j*cw+cw/2;const mid=(x1+x2)/2,arcH=30+Math.abs(j-qi)*16;x.strokeStyle=`rgba(56,189,248,${0.15+0.8*w[j]})`;x.lineWidth=0.5+6*w[j];x.beginPath();x.moveTo(x1,by-14);x.quadraticCurveTo(mid,by-14-arcH,x2,by-14);x.stroke();}
+    // token boxes
+    for(let j=0;j<n;j++){const px=20+j*cw,q=j===qi;x.fillStyle=q?'rgba(56,189,248,.2)':'rgba(20,20,34,.7)';x.beginPath();x.roundRect(px+3,by-12,cw-6,30,6);x.fill();x.strokeStyle=q?'#38bdf8':'rgba(60,60,80,.5)';x.lineWidth=q?2:1.2;x.stroke();x.fillStyle=q?'#38bdf8':'#cfcfe0';x.font="13px 'IBM Plex Mono'";x.textAlign='center';x.fillText(toks[j],px+cw/2,by+7);
+      if(!q){x.fillStyle='#5e5e7a';x.font="9px 'IBM Plex Mono'";x.fillText(w[j].toFixed(2),px+cw/2,by-18);}}
+    x.fillStyle='#38bdf8';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('"'+toks[qi]+'" attends → (weights sum to 1)',20,20);x.textAlign='left';},
+
+  layers(x,W,H,T){const nL=6;const cx=W*0.32;const top=24,bot=H-24,lh=(bot-top)/nL;
+    // residual stream vertical line
+    x.strokeStyle='rgba(56,189,248,.3)';x.lineWidth=2;x.beginPath();x.moveTo(cx,top);x.lineTo(cx,bot);x.stroke();
+    // rising pulse position
+    const prog=(T*0.4)%1;const py=bot-prog*(bot-top);
+    // layer blocks
+    for(let l=0;l<nL;l++){const ly=bot-(l+1)*lh+6;const passed=(bot-ly)<(bot-py)+lh;x.fillStyle=passed?'rgba(56,189,248,.1)':'rgba(255,255,255,.012)';x.fillRect(cx-46,ly,92,lh-8);x.strokeStyle=passed?'rgba(56,189,248,.5)':'rgba(31,31,51,.7)';x.lineWidth=1.2;x.strokeRect(cx-46,ly,92,lh-8);
+      x.fillStyle=passed?'#38bdf8':'#5e5e7a';x.font="9px 'IBM Plex Mono'";x.textAlign='center';x.fillText('layer '+(l+1),cx,ly+lh/2-2);x.fillStyle='#5e5e7a';x.fillText('+attn +MLP',cx,ly+lh/2+10);}
+    // pulse
+    x.fillStyle='#38bdf8';x.beginPath();x.arc(cx,py,5,0,TAU);x.fill();x.fillStyle='rgba(56,189,248,.25)';x.beginPath();x.arc(cx,py,11,0,TAU);x.fill();
+    // residual vector heat strip on right, evolving with progress
+    const v=[];for(let i=0;i<10;i++)v.push(Math.sin(i*1.3+prog*6)*(0.3+prog)+0.4*Math.cos(i*0.7-prog*4));
+    x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('residual stream',W*0.6,top+4);
+    heat(x,W*0.6,top+12,W*0.34,28,v);
+    x.fillStyle='#9a9ab5';x.font="10px 'IBM Plex Mono'";x.fillText('x ← x + attention(x)',W*0.6,top+62);x.fillText('x ← x + MLP(x)',W*0.6,top+80);
+    x.fillStyle='#5e5e7a';x.fillText('repeated every layer',W*0.6,top+104);x.textAlign='left';},
+
+  logits(x,W,H,T){const words=['mat','rug','floor','table','sofa','grass','sun','chair'];const logits=[3.4,2.6,2.3,1.0,0.7,0.3,-0.5,0.9];
+    const phase=(T*0.35)%2;const showProb=phase>1;const probs=softmax(logits);
+    x.fillStyle='#9a9ab5';x.font="12px 'IBM Plex Mono'";x.textAlign='left';x.fillText('"the cat sat on the ___"',16,22);
+    const n=words.length,bw=(W-40)/n,base=H-40;const mxL=Math.max(...logits),mxP=Math.max(...probs);
+    const top=probs.indexOf(mxP);
+    for(let i=0;i<n;i++){const px=20+i*bw;let h_,lab,col;
+      if(!showProb){h_=(logits[i]/mxL)*(H-90);lab=logits[i].toFixed(1);col='rgba(167,139,250,.6)';}
+      else{h_=(probs[i]/mxP)*(H-90);lab=(probs[i]*100).toFixed(0)+'%';col=i===top?'#38bdf8':'rgba(56,189,248,.4)';}
+      h_=Math.max(h_,2);x.fillStyle=col;x.fillRect(px+4,base-h_,bw-8,h_);
+      x.fillStyle=(showProb&&i===top)?'#38bdf8':'#9a9ab5';x.font="10px 'IBM Plex Mono'";x.textAlign='center';x.fillText(words[i],px+bw/2,base+14);x.fillStyle='#5e5e7a';x.fillText(lab,px+bw/2,base-h_-5);}
+    x.fillStyle=showProb?'#38bdf8':'#a78bfa';x.font="11px 'IBM Plex Mono'";x.textAlign='right';x.fillText(showProb?'softmax → probabilities (sum 1) → pick "'+words[top]+'"':'logits (raw scores)',W-16,22);x.textAlign='left';},
+
+  back(x,W,H,T){const cx=W*0.66;
+    // loss curve (left)
+    const lx=20,lw=W*0.42,ly=20,lh=H-50;x.strokeStyle='rgba(94,94,122,.4)';x.lineWidth=1;x.beginPath();x.moveTo(lx,ly);x.lineTo(lx,ly+lh);x.lineTo(lx+lw,ly+lh);x.stroke();
+    const step=Math.floor((T*8)%60);
+    x.strokeStyle='#38bdf8';x.lineWidth=2;x.beginPath();for(let i=0;i<=step;i++){const L=9*Math.exp(-i*0.12);const px=lx+(i/60)*lw,py=ly+lh-(1-L/9.5)*lh;i?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+    const curL=9*Math.exp(-step*0.12);const cpx=lx+(step/60)*lw,cpy=ly+lh-(1-curL/9.5)*lh;x.fillStyle='#38bdf8';x.beginPath();x.arc(cpx,cpy,4,0,TAU);x.fill();
+    x.fillStyle='#5e5e7a';x.font="10px 'IBM Plex Mono'";x.textAlign='left';x.fillText('loss',lx+2,ly+10);x.fillText('training steps →',lx+lw-80,ly+lh+14);
+    // mini network with backward arrows (right)
+    const cols=[[cx,H*0.3],[cx,H*0.55],[cx,H*0.8]];const nx=[cx+70,H*0.45],nx2=[cx+70,H*0.7];
+    const nodes=[[cx-40,H*0.32],[cx-40,H*0.6],[cx+20,H*0.46],[cx+80,H*0.52]];
+    // forward edges faint, backward arrows pulsing
+    const edges=[[0,2],[1,2],[2,3]];const bp=(T*2)%1;
+    edges.forEach(([a,b])=>{x.strokeStyle='rgba(94,94,122,.3)';x.lineWidth=1;x.beginPath();x.moveTo(nodes[a][0],nodes[a][1]);x.lineTo(nodes[b][0],nodes[b][1]);x.stroke();
+      // backward arrow b->a
+      const t=bp;const ax=nodes[b][0]+(nodes[a][0]-nodes[b][0])*t,ay=nodes[b][1]+(nodes[a][1]-nodes[b][1])*t;x.fillStyle='#fb7185';x.beginPath();x.arc(ax,ay,3,0,TAU);x.fill();});
+    nodes.forEach((nd,i)=>{x.fillStyle=i===3?'rgba(56,189,248,.2)':'rgba(20,20,34,.8)';x.strokeStyle=i===3?'#38bdf8':'rgba(94,94,122,.6)';x.lineWidth=1.4;x.beginPath();x.arc(nd[0],nd[1],10,0,TAU);x.fill();x.stroke();});
+    x.fillStyle='#fb7185';x.font="10px 'IBM Plex Mono'";x.textAlign='center';x.fillText('← gradients',cx+20,H-14);
+    x.fillStyle='#5e5e7a';x.textAlign='right';x.fillText('loss → '+curL.toFixed(2),W-12,ly+10);x.textAlign='left';}
+};
+
+const canvases=[...document.querySelectorAll('canvas[data-c]')];
+const visible=new Set();
+function sizeAll(){canvases.forEach(c=>{c.width=c.parentElement.clientWidth;});}
+const io=new IntersectionObserver(es=>{es.forEach(e=>{const c=e.target.querySelector('canvas');if(e.isIntersecting){e.target.classList.add('visible');if(c)visible.add(c);}else if(c)visible.delete(c);});},{threshold:0.12});
+document.querySelectorAll('.section').forEach(s=>io.observe(s));
+let t0=performance.now();
+function loop(){const T=(performance.now()-t0)/1000;visible.forEach(c=>{const fn=SIMS[c.dataset.c];if(fn){const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);fn(x,c.width,c.height,T);}});requestAnimationFrame(loop);}
+window.addEventListener('resize',()=>{clearTimeout(window._r);window._r=setTimeout(sizeAll,180);});
+sizeAll();loop();
+</script>
+</body>
+</html>
