@@ -496,6 +496,8 @@ footer{margin-top:48px;padding-top:22px;border-top:1px solid var(--line);text-al
       <div class="bitacct" id="bitacct"></div>
       <div class="attn-note" style="color:var(--dim);margin-top:12px">A–M→♠ · N–Z→♥ · a–m→♦ · n–z→♣ &nbsp;(suit = 2 bits) &nbsp;·&nbsp; space → red joker, other → black joker. a card stands for a letter exactly as a token stands for a vocabulary id — and a deck, unlike an activation, is a state you can read.</div>
     </div>
+    <a href="corpus/card-instruction-set.html" style="display:block;margin-top:14px;padding:14px 16px;border:1px solid var(--rose);background:rgba(224,86,122,.07);text-decoration:none;color:var(--pa);font-family:var(--mono);font-size:12.5px;line-height:1.65">
+      <b style="color:var(--rose)">▸ the Deck becomes a language</b> — <b>THE 52-CARD INSTRUCTION SET</b>: stop encoding letters and start encoding OPERATIONS — suit = operation family, rank = the operation, a base-52 ISA you deal like a hand. The card encoding above, promoted to a programming language. <span style="color:var(--rose)">deal a program →</span></a>
   </section>
 
   <section class="sec"><h2>Real or Fluff</h2><p class="ss">the honest take — what you can see in, what's contested, what the title overstates, and the truth about the bits (each verdict cited where it matters)</p>__REALFLUFF__</section>
