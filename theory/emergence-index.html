@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergence — the trilogy &amp; the cypher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Shippori+Mincho:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --void:#06090d; --paper:#e3eef0; --mute:#7e94a0; --faint:#445058; --cyan:#5fd0e6; --cyan-lt:#b8f0fa; --violet:#a78bfa; --gold:#f0d489; --green:#5fd0a0; --line:rgba(227,238,240,0.12); }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--void); color:var(--paper); font-family:"Cormorant Garamond",Georgia,serif; font-size:19px; line-height:1.6;}
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(130% 85% at 50% -5%, rgba(167,139,250,0.12), transparent 58%), radial-gradient(150% 130% at 50% 120%, rgba(3,6,9,0.92), transparent 55%);}
+  .wrap{position:relative; z-index:1;}
+  header{min-height:56vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:5rem 1.5rem 2rem;}
+  .kanji{font-family:"Shippori Mincho",serif; font-size:clamp(44px,10vw,90px); font-weight:700; color:transparent; -webkit-text-stroke:1px rgba(167,139,250,0.5); letter-spacing:.12em; line-height:1; margin-bottom:1rem;}
+  h1{font-family:"Cinzel",serif; font-weight:700; font-size:clamp(30px,6.5vw,60px); letter-spacing:.04em; line-height:1.05; margin-bottom:1.1rem;
+    background:linear-gradient(110deg,var(--violet),var(--cyan) 55%,var(--gold)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  header p{font-style:italic; color:var(--mute); font-size:clamp(17px,2.5vw,22px); max-width:38ch;}
+  main{max-width:780px; margin:0 auto; padding:0 1.4rem 6rem;}
+  .grouphead{font-family:"Cinzel",serif; font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--cyan); border-bottom:1px solid var(--line); padding-bottom:.8rem; margin:3.5rem 0 1rem;}
+  .groupnote{font-style:italic; color:var(--mute); font-size:16px; margin-bottom:1.6rem;}
+  a.card{display:block; text-decoration:none; border:1px solid var(--line); border-left:2px solid var(--accent); border-radius:3px;
+    padding:1.4rem 1.5rem; margin-bottom:1rem; background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent); transition:.3s; position:relative;}
+  a.card:hover{border-color:var(--accent); background:linear-gradient(180deg,rgba(255,255,255,0.05),transparent); transform:translateY(-2px);}
+  a.card .row{display:flex; align-items:baseline; gap:.8rem;}
+  a.card .cjp{font-family:"JetBrains Mono",monospace; font-size:14px; color:var(--accent); flex:0 0 auto;}
+  a.card .cnm{font-family:"Cinzel",serif; font-size:17px; letter-spacing:.02em; color:var(--paper);}
+  a.card .cds{font-size:15px; color:var(--mute); line-height:1.4; font-style:italic; margin-top:.35rem;}
+  a.card .cno{position:absolute; top:1.2rem; right:1.4rem; font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--faint); letter-spacing:.1em;}
+  a.card .live{display:inline-block; font-family:"JetBrains Mono",monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--violet); background:rgba(167,139,250,0.14); padding:2px 7px; border-radius:3px; margin-left:.5rem;}
+  footer{max-width:680px; margin:0 auto; padding:2.5rem 1.4rem 6rem; border-top:1px solid var(--line); color:var(--mute); font-size:15px; text-align:center; font-style:italic;}
+  .endmark{font-family:"JetBrains Mono",monospace; letter-spacing:.3em; font-size:11px; color:var(--faint); text-transform:uppercase; margin-top:1.5rem; font-style:normal;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kanji">創発</div>
+    <h1>Emergence</h1>
+    <p>one question — are you fundamental, or do you emerge? — asked of machines, light, and spacetime, with a cypher that lets you watch emergence close into a cycle</p>
+  </header>
+
+  <main>
+    <div class="grouphead">the trilogy · is it fundamental?</div>
+    <div class="groupnote">three pamphlets, one question, asked of a machine, then of light, then of the metric of spacetime.</div>
+    <a class="card" href="is_it_emergent.html" style="--accent:#a78bfa"><div class="cno">i</div><div class="row"><span class="cjp">創発</span><span class="cnm">Is It Emergent?</span></div><div class="cds">transformers, the hype, and a measurement mirage · the machine</div></a>
+    <a class="card" href="is_light_emergent.html" style="--accent:#5fd0e6"><div class="cno">ii</div><div class="row"><span class="cjp">光</span><span class="cnm">Is Light Emergent?</span></div><div class="cds">photons from a qubit lattice · string-net condensation · the 13-bit question</div></a>
+    <a class="card" href="is_gravity_emergent.html" style="--accent:#f0d489"><div class="cno">iii</div><div class="row"><span class="cjp">重力</span><span class="cnm">Is Gravity Emergent?</span></div><div class="cds">spacetime woven from entanglement · the 23.5-bit question</div></a>
+
+    <div class="grouphead">the interactive companion</div>
+    <div class="groupnote">emergence you can turn in your hands: a tiny rule, rooted down, closing into a cycle.</div>
+    <a class="card" href="emergence_cypher.html" style="--accent:#a78bfa"><div class="cno">▶</div><div class="row"><span class="cjp">0·1·1·2·3·5·8</span><span class="cnm">The Emergence Cypher<span class="live">interactive</span></span></div><div class="cds">encode a word into the base · root mod M on the wheel · compare, export, decode signatures</div></a>
+    <a class="card" href="emergence_cypher_math.html" style="--accent:#5fd0a0"><div class="cno">§</div><div class="row"><span class="cjp">π(M)</span><span class="cnm">The Cypher, Explained</span></div><div class="cds">the real math — Pisano periods, residue-seeds, collisions — and an honest note on the 24</div></a>
+  </main>
+
+  <footer>
+    <p>The thread: a transformer's abilities, a photon, the curvature of spacetime — each asked whether it's fundamental or emergent, and answered the same way: <i>weakly, maybe, with an asterisk</i>. Then a cypher where emergence is unmistakable and exact — a rule that closes. A sub-collection of <i>One Current, Many Names</i>.</p>
+    <div class="endmark">創発 · the whole, and the parts in step</div>
+  </footer>
+</div>
+</body>
+</html>

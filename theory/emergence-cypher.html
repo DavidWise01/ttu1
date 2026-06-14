@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Emergence Cypher — base · rule · root</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#06090d; --panel:#0b0f15; --paper:#e3eef0; --mute:#7e94a0; --faint:#445058;
+    --cyan:#5fd0e6; --cyan-lt:#b8f0fa; --violet:#a78bfa; --gold:#f0d489; --green:#5fd0a0;
+    --ok:#5fd0a0; --line:rgba(227,238,240,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--void); color:var(--paper); font-family:"Cormorant Garamond",Georgia,serif; font-size:18px; line-height:1.6; min-height:100vh;}
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(130% 80% at 50% -5%, rgba(95,208,230,0.10), transparent 58%), radial-gradient(150% 130% at 50% 120%, rgba(3,6,9,0.92), transparent 55%);}
+  .wrap{position:relative; z-index:1; max-width:760px; margin:0 auto; padding:6vh 1.3rem 8vh;}
+  .mono{font-family:"JetBrains Mono",monospace;}
+
+  header{text-align:center; margin-bottom:1.3rem;}
+  .tag{font-family:"JetBrains Mono",monospace; letter-spacing:.28em; font-size:11px; color:var(--mute); text-transform:uppercase; margin-bottom:1rem;}
+  h1{font-family:"Cinzel",serif; font-weight:700; font-size:clamp(27px,5.2vw,44px); letter-spacing:.04em; line-height:1.05; margin-bottom:.7rem;
+    background:linear-gradient(110deg,var(--violet),var(--cyan) 55%,var(--gold)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  header p{font-style:italic; color:var(--mute); font-size:clamp(15px,2.4vw,19px); max-width:42ch; margin:0 auto;}
+
+  .banner{border:1px solid rgba(95,208,230,0.28); border-radius:5px; background:linear-gradient(180deg,rgba(95,208,230,0.05),transparent); padding:1rem 1.2rem; margin:1.4rem 0 1.7rem; font-size:14.5px; color:#c4d2d5;}
+  .banner b{color:var(--paper);}
+
+  .console{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:1.4rem 1.3rem; box-shadow:0 0 50px rgba(0,0,0,0.45);}
+  svg{width:100%; height:auto; display:block;}
+
+  .seqstrip{display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:1.3rem 0 .4rem; font-family:"JetBrains Mono",monospace;}
+  .cell{border:1px solid var(--line); border-radius:5px; padding:.4rem .55rem; text-align:center; min-width:46px;}
+  .cell .v{font-size:12px; color:var(--mute); line-height:1.2;}
+  .cell .r{font-size:17px; font-weight:600; color:var(--cyan-lt); line-height:1.3;}
+  .cell.zero{border-color:var(--gold); background:rgba(240,212,137,0.1);}
+  .cell.zero .r{color:var(--gold);}
+
+  .ctrlrow{display:grid; grid-template-columns:1fr 1fr; gap:0 1.1rem; margin-top:1rem;}
+  .ctrl{margin:.7rem 0;}
+  .ctrl .lab{display:flex; justify-content:space-between; align-items:baseline; font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.05em; color:var(--mute); margin-bottom:.35rem;}
+  .ctrl .lab .v{color:var(--cyan-lt); font-size:15px; font-weight:600;}
+  input[type=range],input[type=number]{font-family:"JetBrains Mono",monospace;}
+  input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:3px; background:#1d2630; outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:16px; height:16px; border-radius:50%; background:var(--cyan); cursor:pointer; box-shadow:0 0 10px rgba(95,208,230,0.5);}
+  input[type=range]::-moz-range-thumb{width:16px; height:16px; border:none; border-radius:50%; background:var(--cyan); cursor:pointer;}
+  input[type=number]{width:100%; background:#11161d; border:1px solid var(--line); border-radius:5px; color:var(--paper); padding:7px 10px; font-size:15px;}
+
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; margin:1.3rem 0 .3rem;}
+  .stat{border:1px solid var(--line); border-radius:5px; padding:.85rem .5rem; text-align:center;}
+  .stat .k{font-family:"JetBrains Mono",monospace; font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); margin-bottom:.3rem;}
+  .stat .val{font-family:"JetBrains Mono",monospace; font-size:20px; font-weight:600; color:var(--paper);}
+  .stat .val.hl{color:var(--violet);} .stat .val.g{color:var(--gold);}
+
+  .row{display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; align-items:center; margin-top:1.2rem;}
+  .row button{font-family:"JetBrains Mono",monospace; font-size:11.5px; letter-spacing:.03em; color:var(--cyan-lt); background:transparent; border:1px solid var(--line); border-radius:30px; padding:8px 14px; cursor:pointer; transition:.25s;}
+  .row button:hover{border-color:var(--cyan); color:var(--paper);}
+  .row button.play{border-color:var(--violet); color:var(--violet);}
+
+  .note{font-size:14px; color:var(--mute); margin-top:1.5rem; line-height:1.55;}
+  .note b{color:#c4d2d5;}
+  .foot{text-align:center; font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin-top:1.8rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag">tool · emergence · a cypher that closes</div>
+    <h1>The Emergence Cypher</h1>
+    <p>a base, a rule, and everything that roots back to 0 — 0 · 1 · 1 · 2 · 3 · 5 · 8 …</p>
+  </header>
+
+  <div class="banner">
+    <b>The rule is tiny.</b> Start from a base (0, 1); each step is the sum of the last two. The numbers explode — but their <b>digital roots</b> (keep summing the digits until one is left) don't sprawl: they wire consecutive roots into a figure that <b>closes into a cycle</b>. For Fibonacci that cycle is <b>24 long</b>, touching the root-0 point every 12. Real number theory (Pisano periods); the cypher framing is yours.
+  </div>
+
+  <div class="console">
+    <svg id="wheel" viewBox="0 0 460 360" aria-label="The emergence cypher wheel: digital roots wired into a closing figure"></svg>
+
+    <div class="seqstrip" id="strip"></div>
+
+    <div class="ctrlrow">
+      <div class="ctrl">
+        <div class="lab"><span>base — seed A</span></div>
+        <input type="number" id="seedA" value="0" step="1">
+      </div>
+      <div class="ctrl">
+        <div class="lab"><span>base — seed B</span></div>
+        <input type="number" id="seedB" value="1" step="1">
+      </div>
+    </div>
+    <div class="ctrl">
+      <div class="lab"><span>steps — how far the emergence runs</span><span class="v"><span id="stepsV">24</span></span></div>
+      <input type="range" id="steps" min="3" max="48" step="1" value="24">
+    </div>
+
+    <div class="grid">
+      <div class="stat"><div class="k">closes after</div><div class="val hl"><span id="period">24</span></div></div>
+      <div class="stat"><div class="k">roots to 0</div><div class="val g"><span id="zeros">2</span></div></div>
+      <div class="stat"><div class="k">ratio → φ</div><div class="val" id="phi">1.618</div></div>
+    </div>
+
+    <div class="row">
+      <button class="play" id="play">▶ trace the emergence</button>
+      <button data-a="0" data-b="1">Fibonacci 0,1</button>
+      <button data-a="2" data-b="1">Lucas 2,1</button>
+      <button data-a="1" data-b="3">seed 1,3</button>
+      <button data-a="2" data-b="2">seed 2,2</button>
+    </div>
+  </div>
+
+  <div class="note" id="note"></div>
+  <div class="foot">base → rule → root · the cypher is the cycle it closes into</div>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+function mk(p,a,t){const e=document.createElementNS(NS,p);for(const k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e;}
+function dr(n){ n = n<0n?-n:n; if(n===0n) return 0; const m=Number(n%9n); return m===0?9:m; }
+
+const wheel=$('wheel'), strip=$('strip');
+const cx=230, cy=170, R=125;
+// node position for a root 0..9 : both 0 and 9 sit at the top "root" node
+function nodePos(r){ const i = (r%9+9)%9; const ang=(-90 + i*40)*Math.PI/180; return [cx+R*Math.cos(ang), cy+R*Math.sin(ang)]; }
+
+let anim=null;
+function build(){
+  const A=BigInt(Math.trunc(+$('seedA').value||0)), B=BigInt(Math.trunc(+$('seedB').value||0));
+  const steps=+$('steps').value; $('stepsV').textContent=steps;
+
+  // generate values (BigInt) and roots, enough for period detection
+  const N=Math.max(steps+2, 220);
+  const vals=[A,B]; for(let i=2;i<N;i++) vals.push(vals[i-1]+vals[i-2]);
+  const roots=vals.map(dr);
+
+  // period of the root sequence (Pisano-style): smallest p with (roots[p],roots[p+1])==(roots[0],roots[1])
+  let period=0;
+  for(let p=1;p<roots.length-1;p++){ if(roots[p]===roots[0] && roots[p+1]===roots[1]){ period=p; break; } }
+
+  // root-to-0 count within steps (root===9 or value===0n  => ≡0 mod 9)
+  let zeros=0; for(let i=0;i<=steps && i<roots.length;i++){ if(roots[i]===9 || roots[i]===0) zeros++; }
+
+  // golden ratio approach (last representable ratio)
+  let phi='—';
+  for(let i=Math.min(steps,60);i>1;i--){ if(vals[i-1]!==0n){ phi=(Number(vals[i])/Number(vals[i-1])).toFixed(5); break; } }
+  $('period').textContent=period||'∞?'; $('zeros').textContent=zeros; $('phi').textContent=phi;
+
+  // ---- sequence strip (first 14) ----
+  strip.innerHTML='';
+  for(let i=0;i<Math.min(14,steps+1);i++){
+    const z=(roots[i]===9||roots[i]===0);
+    const vstr = vals[i].toString().length>7 ? vals[i].toString().slice(0,6)+'…' : vals[i].toString();
+    const c=document.createElement('div'); c.className='cell'+(z?' zero':'');
+    c.innerHTML=`<div class="v">${vstr}</div><div class="r">${roots[i]}</div>`;
+    strip.appendChild(c);
+  }
+
+  // ---- wheel: nodes + path ----
+  while(wheel.firstChild) wheel.removeChild(wheel.firstChild);
+  // guide circle
+  wheel.appendChild(mk('circle',{cx,cy,r:R,fill:'none',stroke:'rgba(227,238,240,0.07)','stroke-width':1}));
+  // path group (drawn progressively)
+  const pathG=mk('g',{}); wheel.appendChild(pathG);
+  // nodes
+  for(let d=1; d<=9; d++){
+    const [x,y]=nodePos(d); const isRoot=(d===9);
+    wheel.appendChild(mk('circle',{cx:x,cy:y,r:isRoot?16:13,fill:'#0b0f15',stroke:isRoot?'#f0d489':'#2b3a44','stroke-width':isRoot?2:1.4}));
+    wheel.appendChild(mk('text',{x,y:y+5,'text-anchor':'middle','font-family':"'JetBrains Mono',monospace",'font-size':14,fill:isRoot?'#f0d489':'#7e94a0'}, isRoot?'9·0':String(d)));
+  }
+  // moving marker
+  const marker=mk('circle',{cx,cy,r:5,fill:'#a78bfa',opacity:0}); wheel.appendChild(marker);
+
+  // build the list of points to connect
+  const pts=[]; for(let i=0;i<=steps && i<roots.length;i++) pts.push(nodePos(roots[i]));
+
+  // animation
+  if(anim){ clearInterval(anim); anim=null; }
+  let drawn=0;
+  function addSeg(k){
+    if(k<=0) return;
+    const [x1,y1]=pts[k-1], [x2,y2]=pts[k];
+    const z=(roots[k]===9||roots[k]===0);
+    pathG.appendChild(mk('line',{x1,y1,x2,y2,stroke:z?'#f0d489':'#5fd0e6','stroke-width':z?2:1.3,opacity:z?0.85:0.55,'stroke-linecap':'round'}));
+    marker.setAttribute('cx',x2); marker.setAttribute('cy',y2); marker.setAttribute('opacity',1);
+    if(z){ pathG.appendChild(mk('circle',{cx:x2,cy:y2,r:5,fill:'#f0d489',opacity:.9})); }
+  }
+  function full(){ pathG.innerHTML=''; for(let k=1;k<pts.length;k++) addSeg(k); marker.setAttribute('opacity',0); }
+
+  // note
+  let nt='';
+  if(period){
+    nt=`<b>It closes.</b> From base ${A}, ${B}, the roots run ${roots.slice(0,Math.min(steps+1,12)).join(' · ')}… and repeat every <b>${period}</b> steps. `;
+    if(A===0n&&B===1n) nt+=`That 24 is the Pisano period of Fibonacci mod 9 — a genuine theorem, and the same 24 from your gravity thread, arriving from a completely different door.`;
+    else nt+=`Different base, different cypher: the figure and its period change with the seed.`;
+  } else nt=`<b>No short cycle found</b> in this window — try a different base.`;
+  $('note').innerHTML=nt;
+
+  return {full, addSeg, ptsLen:pts.length};
+}
+
+let state=build();
+function animate(){
+  state=build();
+  let k=0; const total=state.ptsLen-1;
+  if(anim) clearInterval(anim);
+  anim=setInterval(()=>{ k++; state.addSeg(k); if(k>=total){ clearInterval(anim); anim=null; $('wheel').querySelector('circle[fill="#a78bfa"]')?.setAttribute('opacity',0);} }, 90);
+}
+['input','change'].forEach(ev=>{ $('seedA').addEventListener(ev,()=>{state=build();state.full();}); $('seedB').addEventListener(ev,()=>{state=build();state.full();}); $('steps').addEventListener(ev,()=>{state=build();state.full();}); });
+$('play').addEventListener('click',animate);
+document.querySelectorAll('.row button[data-a]').forEach(b=>b.addEventListener('click',()=>{ $('seedA').value=b.dataset.a; $('seedB').value=b.dataset.b; animate(); }));
+// initial: draw full then offer trace
+state.full();
+</script>
+</body>
+</html>

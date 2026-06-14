@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Emergence Cypher — the math behind it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --void:#06090d; --paper:#e3eef0; --mute:#7e94a0; --faint:#445058; --cyan:#5fd0e6; --cyan-lt:#b8f0fa; --violet:#a78bfa; --gold:#f0d489; --green:#5fd0a0; --line:rgba(227,238,240,0.12); }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--void); color:var(--paper); font-family:"Cormorant Garamond",Georgia,serif; font-size:19px; line-height:1.72;}
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(130% 80% at 50% -5%, rgba(167,139,250,0.10), transparent 58%), radial-gradient(150% 130% at 50% 120%, rgba(3,6,9,0.92), transparent 55%);}
+  .wrap{position:relative; z-index:1; max-width:720px; margin:0 auto; padding:0 1.5rem 8rem;}
+  .mono{font-family:"JetBrains Mono",monospace;}
+  header{text-align:center; padding:8vh 1rem 2vh;}
+  .tag{font-family:"JetBrains Mono",monospace; letter-spacing:.28em; font-size:11px; color:var(--mute); text-transform:uppercase; margin-bottom:1.1rem;}
+  h1{font-family:"Cinzel",serif; font-weight:700; font-size:clamp(28px,5.5vw,50px); letter-spacing:.03em; line-height:1.06; margin-bottom:1rem;
+    background:linear-gradient(110deg,var(--violet),var(--cyan) 55%,var(--gold)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  header p{font-style:italic; color:var(--mute); font-size:clamp(16px,2.4vw,21px); max-width:34ch; margin:0 auto;}
+  .idx{font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); margin:5vh 0 .6rem;}
+  h2{font-family:"Cormorant Garamond",serif; font-weight:500; font-size:clamp(23px,4vw,32px); color:var(--paper); margin-bottom:1rem;}
+  p{color:#c4d2d5; font-size:18px; margin-bottom:1.1rem; max-width:62ch;}
+  p b{color:var(--paper); font-weight:500;}
+  code{font-family:"JetBrains Mono",monospace; font-size:.84em; background:rgba(95,208,230,0.12); padding:1px 6px; border-radius:3px; color:var(--cyan-lt);}
+  .pull{font-style:italic; font-size:clamp(20px,3.2vw,27px); color:#ddeef0; margin:1.3rem 0; padding-left:1.2rem; border-left:2px solid var(--violet);}
+  .tools{display:flex; gap:.7rem; flex-wrap:wrap; justify-content:center; margin:1.5rem 0 0;}
+  .tools a{font-family:"JetBrains Mono",monospace; font-size:12px; letter-spacing:.04em; text-decoration:none; color:var(--void); background:linear-gradient(180deg,#c9b6ff,#a78bfa); padding:11px 20px; border-radius:4px;}
+  .tools a.ghost{background:transparent; color:var(--cyan-lt); border:1px solid var(--line);}
+  .colophon{border:1px solid rgba(95,208,160,0.3); border-left:2px solid var(--green); border-radius:0 5px 5px 0; background:linear-gradient(90deg,rgba(95,208,160,0.05),transparent); padding:1.3rem 1.5rem; margin-top:2rem;}
+  .colophon .h{font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--green); margin-bottom:.6rem;}
+  .colophon p{color:var(--mute); font-size:16px; margin:0 0 .8rem;}
+  .colophon p b{color:#c4d2d5;}
+  .foot{font-family:"JetBrains Mono",monospace; letter-spacing:.2em; font-size:11px; color:var(--faint); text-transform:uppercase; text-align:center; margin-top:2.4rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag">emergence trilogy · interactive companion</div>
+    <h1>The Cypher,<br>Explained</h1>
+    <p>why a tiny rule, rooted down, closes into a cycle — and the real math under the toy</p>
+    <div class="tools">
+      <a href="emergence_cypher.html">▶ open the interactive cypher</a>
+      <a class="ghost" href="emergence_index.html">← back to Emergence</a>
+    </div>
+  </header>
+
+  <div class="idx">// the base rule</div>
+  <h2>Two seeds and one instruction</h2>
+  <p>The whole engine is a single recurrence: start with two numbers, and forever after, <b>each term is the sum of the two before it</b>. From <code>0, 1</code> that's Fibonacci — 0, 1, 1, 2, 3, 5, 8, 13… — but any two seeds will do. The numbers race off to infinity, and the ratio of neighbours settles onto the golden ratio <code>φ ≈ 1.618</code>: an irrational constant <b>emerging</b> from nothing but integer addition. That's the first emergence, and it's real.</p>
+
+  <div class="idx">// rooting down</div>
+  <h2>Keep only the remainder</h2>
+  <p>Now "root" each giant term down by taking it <b>mod M</b> — for M = 9 this is the classic digital root (sum the digits until one remains). The unbounded sequence collapses onto the small wheel of residues <code>0 … M−1</code>. Connect each residue to the next and you draw a path on that wheel.</p>
+  <p class="pull">The numbers are infinite; their shadows on the wheel are not.</p>
+
+  <div class="idx">// why it closes</div>
+  <h2>The Pisano period</h2>
+  <p>Here's the part that feels like magic but is a theorem. Mod M, only finitely many <b>pairs</b> of consecutive residues exist — at most M². Since each pair determines the next, the sequence must eventually revisit a pair, and from there it repeats <b>exactly</b>. That repeat length is the <b>Pisano period</b>, π(M). For Fibonacci mod 9 it is <b>24</b>, and the sequence touches <code>0</code> every <b>12</b> steps — two beats of twelve inside one cycle of twenty-four. (The same 24 from the gravity dossier shows up here through a completely separate door; see the colophon for how much to read into that.)</p>
+
+  <div class="idx">// the key insight</div>
+  <h2>Only the residue-seed matters</h2>
+  <p>The cycle a word produces depends <b>only</b> on its seed reduced mod M — the residue-pair <code>(a mod M, b mod M)</code>. The raw size of the seed is irrelevant once you're on the wheel. Two consequences follow, and the tool turns both into features:</p>
+  <p>First, <b>collisions</b>: different words whose seeds reduce to the same residue-pair (or to another pair on the same orbit) close into the <b>same cycle</b>. Second, <b>decoding is many-to-one</b>: from a signature you can recover the cycle-class and the handful of residue-seeds on it, but never the unique word — infinitely many map there. Raise M and the M² pairs spread across more, longer orbits, so collisions thin out: the cipher's <b>resolution rises with the modulus</b>.</p>
+
+  <div class="idx">// the cipher framing</div>
+  <h2>Base as key, cycle as signature</h2>
+  <p>Read as a cipher: the <b>base is the key</b>, the <b>closing cycle is the signature</b>, and the modulus is a resolution dial. Encode a word, export its signature as a code, compare two words for a collision, or hunt the smallest modulus that finally separates them. It's a faithful, deterministic encoding — and, as the next note insists, a <i>toy</i> one.</p>
+
+  <div class="colophon">
+    <div class="h">✓ kept honest</div>
+    <p><b>The math is real.</b> The recurrence, the golden-ratio limit, digital roots, and Pisano periods are textbook number theory; Fibonacci mod 9 genuinely has period 24 with zeros every 12.</p>
+    <p><b>The 24 is a real coincidence of structure, not a bridge.</b> That this 24 matches the bosonic-string transverse count from the gravity thread is a true and pretty echo — both are real facts — but nothing here <i>derives</i> one from the other. Two different rooms, same house number. Enjoy it as resonance; don't build a causal claim on it.</p>
+    <p><b>Not cryptography.</b> "Cypher" is the framing, not a security claim — this encoding is trivially many-to-one and easily inverted to its class. It's an instrument for seeing emergence and closure, not for keeping secrets.</p>
+  </div>
+
+  <div class="foot">base → rule → root · the signature is the cycle</div>
+</div>
+</body>
+</html>

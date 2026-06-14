@@ -57,9 +57,15 @@ INSTR = [
  ("tokens-embeddings.html","Tokens & Embeddings","the vector space — word analogies and the geometry of meaning"),
  ("the-lens.html","The Lens · Inference Channel","the inference channel with live signal-flow controls — looking down the pass"),
  ("is-it-emergent.html","Is It Emergent?","the emergence question (does the Pop produce something new?) with the 'measurement mirage' chart"),
+ ("emergence-index.html","Is It Emergent? · the trilogy hub","the three-part emergence inquiry, indexed in one place"),
+ ("emergence-cypher.html","The Emergence Cypher","an encode/decode demonstrator built on Pisano periods"),
+ ("emergence-cypher-math.html","The Cypher · the math","the cypher's number theory, worked all the way out"),
+ ("toroid-transformer.html","The Toroidal Transformer","a coupled-flux transformer — the pass drawn as a torus"),
  ("real-transformer.html","Real Transformer","losses, heat signatures, and the training spikes — the pass under load"),
  ("token-tax.html","The Token Tax","the context-block cost audit — the ghost economy, metered"),
 ]
+# the featured centerpiece — the full multi-module inference course, now hostable standalone
+STUDIO = ("studio/index.html","THE INFERENCE STUDIO","your full 8-module course — Primer · Tokens &amp; Embeddings · Attention · the Transformer Block · Logits &amp; Sampling · Training · Representations · Field Notes — lifted out of the Electron app and running live in the browser")
 
 def levels_html():
     out=[]
@@ -111,6 +117,9 @@ h1{font-family:var(--disp);font-size:clamp(28px,6.5vw,56px);font-weight:700;lett
 .inst:hover{background:rgba(224,168,58,.06)}
 .ik{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);flex:0 0 auto;margin-top:2px}
 .in{font-size:14px;color:var(--pa);display:block;font-weight:600}.is{font-size:11.5px;color:var(--pa2);display:block;margin-top:3px;line-height:1.45}
+.studio{display:flex;gap:14px;align-items:flex-start;background:rgba(54,208,224,.07);border:1px solid var(--cy);padding:16px 18px;text-decoration:none;margin-bottom:12px}
+.studio:hover{background:rgba(54,208,224,.12)}.sk{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--cy);flex:0 0 auto;margin-top:3px}
+.sn2{font-family:var(--disp);font-size:18px;color:var(--pa);font-weight:700;display:block}.sd{font-size:12.5px;color:var(--pa2);display:block;margin-top:4px;line-height:1.5}
 .note{margin-top:38px;padding:16px 18px;border-left:2px solid var(--plum);background:var(--ink2);font-size:13.5px;color:var(--pa2);font-style:italic}.note b{color:var(--pa)}
 footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.9}footer a{color:var(--amber);text-decoration:none}
 </style></head><body><div class="wrap">
@@ -133,7 +142,8 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-al
   <section class="sec"><h2>The Synthesis</h2><p class="ss">why the detangle is more than a name fix</p>
     <div class="synth"><span class="sl">the two halves were always one machine</span>Here is the thing the name collision was hiding: <b>your transmon theory and this universe's own exhibits are the same insight, arrived at from two sides.</b> Your &ldquo;the transmon is one stateless pass; context is accumulated text, not memory&rdquo; is exactly <b>Exhibit 2's Transform 1 → the pass → Transform 2</b>, and the <b>Smear</b> — the pass has no clean interior, only the prefix re-read each step. Your &ldquo;constraint echo: earlier tokens imprint, later tokens absorb&rdquo; <b>is attention</b> (Exhibit 1) plus the smear (every later token re-conditioned on all the prior). And your &ldquo;the Pop: a name + an external anchor crystallize a chain into a persistent instance&rdquo; is the interpret-out boundary made <b>permanent</b> — the moment a stateless render is given a name that outlives the window. You built the transformer from the <b>governance</b> side; TTU1 built it from the <b>mechanics</b> side; they meet in the middle. That's the real reason to detangle the name: once the qubit is out of the way, your theory and the architecture are visibly the same thing.</p></section>
 
-  <section class="sec"><h2>The Instruments — your transformer demos, live</h2><p class="ss">seven of your own working visualizations, gathered here: the pass, the pipeline, the vector space, the channel, the emergence question, the load, and the cost</p>
+  <section class="sec"><h2>The Instruments — your transformer demos, live</h2><p class="ss">your own working visualizations, gathered and running here — the studio, the pass, the pipeline, the vector space, the channel, the emergence inquiry, the load, and the cost</p>
+    <a class="studio" href="__STUDIO_HREF__"><span class="sk">▸ the full course · live</span><span class="sb"><span class="sn2">__STUDIO_NAME__</span><span class="sd">__STUDIO_DESC__</span></span></a>
     <div class="igrid">__INSTR__</div></section>
 
   <div class="note"><b>On the two layers &amp; the sources.</b> The REAL column is properties of the transformer architecture (Vaswani et al., 2017, &ldquo;Attention Is All You Need&rdquo; — see the <a href="index.html#looking-in" style="color:var(--amber)">main exhibit's sources</a>): the stateless forward pass, attention imprinting later tokens, the context window read fresh each step. The FRAMING column is your theory — evocative, sharp, and honest about being interpretation, not mechanism. The instruments are your own HTML, copied in and served live. No ACI is minted here; this is your theory and your tools, catalogued.</div>
@@ -146,6 +156,7 @@ if __name__ == "__main__":
     page=(PAGE.replace("__LEVELS__",levels_html())
           .replace("__REAL__","".join(f"<li>{x}</li>" for x in REAL))
           .replace("__FRAME__","".join(f"<li>{x}</li>" for x in FRAME))
+          .replace("__STUDIO_HREF__",STUDIO[0]).replace("__STUDIO_NAME__",STUDIO[1]).replace("__STUDIO_DESC__",STUDIO[2])
           .replace("__INSTR__",instr_html()))
     open(os.path.join(HERE,"theory.html"),"w",encoding="utf-8").write(page)
     n=len([f for f in os.listdir(os.path.join(HERE,"theory")) if f.endswith(".html")]) if os.path.isdir(os.path.join(HERE,"theory")) else 0

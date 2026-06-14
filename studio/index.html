@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none';">
+  <title>Transformer Inference Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Course navigation">
+      <div class="brand">
+        <div class="brand-mark">TI</div>
+        <div>
+          <div class="eyebrow">Transformer Inference</div>
+          <h1>Inference Studio</h1>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-top">
+          <span>Series progress</span>
+          <strong id="progressText">0 / 7</strong>
+        </div>
+        <div class="progress-track"><span id="progressFill"></span></div>
+      </div>
+
+      <nav class="module-list" id="moduleList"></nav>
+    </aside>
+
+    <main class="stage">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow" id="moduleNumber">Instrument 00</div>
+          <div class="top-title" id="topTitle">Primer</div>
+        </div>
+        <div class="top-actions">
+          <button type="button" class="ghost" id="prevButton">Previous</button>
+          <button type="button" class="ghost" id="doneButton">Mark done</button>
+          <button type="button" id="nextButton">Next</button>
+        </div>
+      </header>
+
+      <section class="lesson-head">
+        <div class="kicker" id="lessonKicker">Transformer Inference</div>
+        <h2 id="lessonTitle">From text to the next word</h2>
+        <p id="lessonIntro"></p>
+        <div class="concept-strip" id="conceptStrip"></div>
+      </section>
+
+      <section class="workbench">
+        <div class="instrument-panel">
+          <div class="panel-head">
+            <span id="instrumentLabel">Forward pass map</span>
+            <span id="instrumentStatus">live canvas</span>
+          </div>
+          <canvas id="mainCanvas" aria-label="Interactive transformer inference instrument"></canvas>
+        </div>
+
+        <aside class="control-card">
+          <div class="tab-strip" id="tabStrip"></div>
+          <div class="control-panel" id="controlPanel"></div>
+          <div class="metric-list" id="metricList"></div>
+          <p class="note" id="lessonNote"></p>
+        </aside>
+      </section>
+
+      <section class="reading-grid" id="readingGrid"></section>
+    </main>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

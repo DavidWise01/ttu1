@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Toroidal Transformer — a coupled-flux system</title>
+<style>
+:root{
+  --bg:#0b0e14;--panel:#141a24;--panel2:#0f141d;--ink:#eaf0f7;--body:#a9b6c6;--dim:#6a788d;--dimmer:#28323f;
+  --pri:#5ed6ff;--sec:#ffb454;--flux:#b888ff;--cu:#e8915a;--sat:#ff6b81;--ok:#7cffb0;--warn:#ffd166;
+  --line:rgba(120,150,180,.13);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0c1018,#0b0e14 60%,#090c12);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased;min-height:100vh}
+header{border-bottom:1px solid var(--line);background:rgba(11,14,20,.92);position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
+.hbar{max-width:1280px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 22px}
+.brand{font-family:var(--mono);font-weight:600;letter-spacing:.1em;font-size:13px;color:var(--cu);text-transform:uppercase}.brand b{color:var(--ink)}
+.hdr-r{display:flex;align-items:center;gap:14px}
+.pstate{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}.pstate.live{color:var(--ok)}.pstate.sat{color:var(--sat)}
+#pbtn{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:rgba(124,255,176,.08);border:1px solid var(--ok);border-radius:9px;padding:9px 16px;cursor:pointer;transition:.15s}
+#pbtn:hover{background:rgba(124,255,176,.18)}#pbtn.on{color:var(--sat);border-color:var(--sat);background:rgba(255,107,129,.1)}
+main{max-width:1280px;margin:0 auto;padding:18px 22px 80px}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+@media(max-width:1040px){.layout{grid-template-columns:1fr}}
+.left{display:flex;flex-direction:column;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.row2{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel2);overflow:hidden}
+.ch{padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);background:rgba(232,145,90,.03)}
+canvas,svg{display:block;width:100%;height:auto}#cv3d{height:330px;cursor:grab}#cv3d:active{cursor:grabbing}
+.side{display:flex;flex-direction:column;gap:13px}
+.group{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:13px}
+.group h3{margin:0 0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.group.pri h3{color:var(--pri)}.group.sec h3{color:var(--sec)}.group.core h3{color:var(--cu)}
+.slabel{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:5px}.slabel b{color:var(--ink)}
+input[type=range]{width:100%;height:4px;margin:2px 0 10px}.pri input{accent-color:var(--pri)}.sec input{accent-color:var(--sec)}.core input{accent-color:var(--cu)}
+select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.readout{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:13px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:12px}
+.kv:last-child{border-bottom:none}.kv .k{color:var(--dim)}.kv .v{color:var(--ink);text-align:right}
+.kv .v.pri{color:var(--pri)}.kv .v.sec{color:var(--sec)}.kv .v.sat{color:var(--sat)}.kv .v.ok{color:var(--ok)}.kv .v.warn{color:var(--warn)}
+.verdict{font-family:var(--mono);font-size:11.5px;line-height:1.5;padding:10px 12px;border-radius:9px;border:1px solid var(--line)}
+.verdict.ok{color:var(--ok);border-color:rgba(124,255,176,.3);background:rgba(124,255,176,.06)}
+.verdict.warn{color:var(--warn);border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.06)}
+.verdict.sat{color:var(--sat);border-color:rgba(255,107,129,.4);background:rgba(255,107,129,.1)}
+.note{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.55;border-left:2px solid var(--dimmer);padding-left:10px}
+.ratio{font-family:var(--mono);font-size:26px;font-weight:700;text-align:center;color:var(--cu);padding:6px 0}
+.ratio .a{color:var(--pri)}.ratio .b{color:var(--sec)}
+</style>
+</head>
+<body>
+<header><div class="hbar">
+  <div class="brand">⊗ Toroidal <b>Transformer</b></div>
+  <div class="hdr-r"><span class="pstate" id="pstate">○ idle</span><button id="pbtn">⏻ energize</button></div>
+</div></header>
+<main>
+  <div class="layout">
+    <div class="left">
+      <div class="card">
+        <div class="ch">the system — primary (blue) and secondary (amber) share one core; flux couples them</div>
+        <canvas id="cv3d"></canvas>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <div class="ch">waveforms — Vp drives flux, flux induces Vs</div>
+          <svg id="wave" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="card">
+          <div class="ch">core flux — B vs time, against B_sat</div>
+          <svg id="flux" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch">power flow — in (primary) → core → out (secondary) → load</div>
+        <svg id="power" viewBox="0 0 800 130" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="group core"><h3>shared core</h3>
+        <select id="s-core"></select>
+        <div class="ratio" style="margin-top:10px"><span class="a" id="r-np">100</span> : <span class="b" id="r-ns">100</span></div>
+        <div class="note" id="ratio-desc" style="text-align:center;border:none;padding:0"></div>
+      </div>
+      <div class="group pri"><h3>● primary (input)</h3>
+        <div class="slabel">turns Np <b id="v-np">100</b></div><input type="range" id="s-np" min="5" max="400" step="5" value="100">
+        <div class="slabel">drive voltage <b id="v-vp">12 V</b></div><input type="range" id="s-vp" min="1" max="120" step="1" value="12">
+        <div class="slabel">frequency <b id="v-f">10 kHz</b></div><input type="range" id="s-f" min="50" max="100000" step="50" value="10000">
+      </div>
+      <div class="group sec"><h3>● secondary (output)</h3>
+        <div class="slabel">turns Ns <b id="v-ns">100</b></div><input type="range" id="s-ns" min="5" max="400" step="5" value="100">
+        <div class="slabel">load <b id="v-rl">100 Ω</b></div><input type="range" id="s-rl" min="2" max="2000" step="2" value="100">
+      </div>
+      <div class="readout">
+        <div class="kv"><span class="k">turns ratio Ns/Np</span><span class="v" id="o-n">—</span></div>
+        <div class="kv"><span class="k">Vp → Vs</span><span class="v sec" id="o-vs">—</span></div>
+        <div class="kv"><span class="k">secondary current</span><span class="v sec" id="o-is">—</span></div>
+        <div class="kv"><span class="k">primary current</span><span class="v pri" id="o-ip">—</span></div>
+        <div class="kv"><span class="k">peak flux B</span><span class="v" id="o-b">—</span></div>
+        <div class="kv"><span class="k">power transferred</span><span class="v" id="o-p">—</span></div>
+        <div class="verdict" id="o-v">Set turns &amp; drive, then energize.</div>
+      </div>
+      <div class="note">A real toroidal transformer: two windings on one core, coupled only by shared magnetic flux — no electrical connection. Vs/Vp = Ns/Np (Faraday), power is conserved, and peak flux B = Vp/(Np·Aₑ·2πf). Too few turns or too low a frequency drives B past B_sat and the core saturates — the real design limit. Idealized coupling k≈1; no leakage/winding-loss model.</div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);const NS="http://www.w3.org/2000/svg";const mu0=4*Math.PI*1e-7;
+const CORES={
+  "FT50-43 ferrite":{mu_r:850,Ae:0.133e-4,le:31.5e-3,Bsat:0.35},
+  "FT82-43 ferrite":{mu_r:850,Ae:0.246e-4,le:51.8e-3,Bsat:0.35},
+  "FT114-43 ferrite":{mu_r:850,Ae:0.375e-4,le:71.2e-3,Bsat:0.35},
+  "T50-6 iron powder":{mu_r:8.5,Ae:0.121e-4,le:31.7e-3,Bsat:0.50},
+};
+let coreName="FT50-43 ferrite";
+const ST={Np:100,Ns:100,Vp:12,f:10000,Rl:100};
+const PWR={on:false,t:0};
+function core(){return CORES[coreName];}
+function ratio(){return ST.Ns/ST.Np;}
+function Vs(){return ST.Vp*ratio();}
+function Is(){return Vs()/ST.Rl;}
+function Ip(){return Is()*ratio();}         // reflected (ideal)
+function Bpeak(){const c=core();return ST.Vp/(ST.Np*c.Ae*2*Math.PI*ST.f);} // sinusoidal peak flux density
+function satFrac(){return Math.min(2,Bpeak()/core().Bsat);}
+
+function mk(p,a){const e=document.createElementNS(NS,p);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function tx(svg,x,y,t,c,sz,an,wt){const e=mk("text",{x,y,fill:c||"#a9b6c6","font-family":"monospace","font-size":sz||10,"text-anchor":an||"middle"});if(wt)e.setAttribute("font-weight",wt);e.textContent=t;svg.appendChild(e);}
+
+/* ---------- waveforms ---------- */
+function drawWave(){
+  const svg=$("#wave");svg.innerHTML="";const W=400,H=260,padL=36,padR=12,padT=16,padB=24;
+  const cy=(padT+H-padB)/2,amp=(H-padT-padB)/2*0.9;
+  svg.appendChild(mk("line",{x1:padL,y1:cy,x2:W-padR,y2:cy,stroke:"rgba(120,150,180,.2)"}));
+  const sat=satFrac();
+  // primary voltage (blue sine) + secondary (amber sine scaled by ratio, clipped if saturated)
+  const vsScale=Math.min(1,ratio()*ST.Vp/Math.max(ST.Vp,Vs())); // for display normalize
+  const phase=PWR.on?PWR.t*ST.f*2*Math.PI:0;
+  function sine(color,scale,clip){let d="";for(let i=0;i<=200;i++){const x=padL+i/200*(W-padL-padR);
+    let s=Math.sin(i/200*4*Math.PI - phase);
+    if(clip&&sat>1)s=Math.max(-1/sat,Math.min(1/sat,s))*sat*0.6; // flat-top distortion when saturated
+    const y=cy-s*amp*scale;d+=(i?"L":"M")+x+" "+y+" ";}
+    svg.appendChild(mk("path",{d,fill:"none",stroke:color,"stroke-width":2.2}));}
+  sine("#5ed6ff",0.9,true);                       // primary
+  sine("#ffb454",0.9*Math.min(1.4,ratio()),true); // secondary scaled by turns ratio
+  tx(svg,padL+4,padT+10,"Vp",  "#5ed6ff",10,"start",700);
+  tx(svg,padL+34,padT+10,"Vs","#ffb454",10,"start",700);
+  if(sat>1)tx(svg,(padL+W)/2,H-8,"⚠ flat-topping — core saturating","#ff6b81",9);
+  else tx(svg,(padL+W)/2,H-8,"clean sinusoids — Vs = Vp·(Ns/Np)","#6a788d",9);
+}
+
+/* ---------- core flux vs time ---------- */
+function drawFlux(){
+  const svg=$("#flux");svg.innerHTML="";const W=400,H=260,padL=42,padR=12,padT=16,padB=24;
+  const c=core();const cy=(padT+H-padB)/2,amp=(H-padT-padB)/2*0.82;
+  // Bsat reference
+  const bp=Bpeak(),disp=Math.min(1,bp/c.Bsat);
+  svg.appendChild(mk("line",{x1:padL,y1:cy-amp,x2:W-padR,y2:cy-amp,stroke:"rgba(255,107,129,.4)","stroke-dasharray":"4 3"}));
+  svg.appendChild(mk("line",{x1:padL,y1:cy+amp,x2:W-padR,y2:cy+amp,stroke:"rgba(255,107,129,.4)","stroke-dasharray":"4 3"}));
+  tx(svg,padL+2,cy-amp-4,`+Bsat ${c.Bsat}T`,"#ff6b81",8,"start");
+  svg.appendChild(mk("line",{x1:padL,y1:cy,x2:W-padR,y2:cy,stroke:"rgba(120,150,180,.2)"}));
+  const phase=PWR.on?PWR.t*ST.f*2*Math.PI:0;
+  // flux waveform: amplitude = Bpeak/Bsat * amp, clipped at +-amp (saturation)
+  let d="";for(let i=0;i<=200;i++){const x=padL+i/200*(W-padL-padR);
+    let b=Math.sin(i/200*4*Math.PI - phase)*(bp/c.Bsat);
+    b=Math.max(-1,Math.min(1,b)); // clip at Bsat
+    d+=(i?"L":"M")+x+" "+(cy-b*amp)+" ";}
+  const col=disp>0.95?"#ff6b81":disp>0.6?"#ffd166":"#b888ff";
+  svg.appendChild(mk("path",{d,fill:"none",stroke:col,"stroke-width":2.4}));
+  tx(svg,(padL+W)/2,H-8,`Bpeak ${bp<c.Bsat?bp.toFixed(3):c.Bsat+"(clipped)"}T = ${(disp*100).toFixed(0)}% of Bsat`,col,9);
+}
+
+/* ---------- power flow ---------- */
+function drawPower(){
+  const svg=$("#power");svg.innerHTML="";const W=800,H=130;
+  const pin=ST.Vp*Ip(),pout=Vs()*Is();const sat=satFrac();
+  const blocks=[["SOURCE",`${ST.Vp}V`,"#b888ff",80],["PRIMARY",`${ST.Np}T · ${(Ip()*1000).toFixed(0)}mA`,"#5ed6ff",240],
+    ["CORE",`Φ ${(satFrac()*100).toFixed(0)}% Bsat`,sat>0.95?"#ff6b81":"#e8915a",420],
+    ["SECONDARY",`${ST.Ns}T · ${(Is()*1000).toFixed(0)}mA`,"#ffb454",600],["LOAD",`${ST.Rl}Ω`,"#7cffb0",740]];
+  // arrows
+  for(let i=0;i<blocks.length-1;i++){const x1=blocks[i][3]+34,x2=blocks[i+1][3]-34;
+    svg.appendChild(mk("line",{x1,y1:H/2,x2,y2:H/2,stroke:"rgba(120,150,180,.4)","stroke-width":2}));
+    svg.appendChild(mk("path",{d:`M ${x2} ${H/2} l -7 -4 l 0 8 z`,fill:"rgba(120,150,180,.7)"}));
+    // animated power dots
+    if(PWR.on&&sat<0.98){const np=3;for(let k=0;k<np;k++){const t=((PWR.t*2.5+k/np+i*0.1)%1);
+      svg.appendChild(mk("circle",{cx:x1+(x2-x1)*t,cy:H/2,r:2.5,fill:"#7cffb0"}));}}}
+  blocks.forEach(([name,val,col,x])=>{
+    svg.appendChild(mk("rect",{x:x-32,y:H/2-26,width:64,height:52,rx:7,fill:"rgba(14,20,29,.9)",stroke:col,"stroke-width":1.6}));
+    tx(svg,x,H/2-6,name,col,8.5,"middle",700);tx(svg,x,H/2+10,val,"#a9b6c6",8);});
+  tx(svg,160,H-6,`P_in ${pin.toFixed(2)}W`,"#5ed6ff",9);
+  tx(svg,670,H-6,`P_out ${pout.toFixed(2)}W`,"#ffb454",9);
+  if(sat>0.98)tx(svg,420,H-6,"core saturated — transfer breaks down","#ff6b81",9);
+  else tx(svg,420,H-6,"power conserved across the core","#6a788d",9);
+}
+
+/* ---------- 3D: toroid with two windings ---------- */
+let R3=null;
+function init3d(){
+  if(!window.THREE)return;const cv=$("#cv3d");
+  const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(42,1,0.1,100);
+  sc.add(new THREE.AmbientLight(0x4a5568,0.7));const k=new THREE.DirectionalLight(0xffffff,1.0);k.position.set(5,8,6);sc.add(k);
+  const grp=new THREE.Group();sc.add(grp);
+  R3={r,sc,cam,grp,rot:{x:-0.5,y:0.5},drag:false,lx:0,ly:0,dist:9};
+  function rs(){const w=cv.clientWidth,h=cv.clientHeight||330;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  R3.rs=rs;rs();build3d();
+  cv.addEventListener('pointerdown',e=>{R3.drag=true;R3.lx=e.clientX;R3.ly=e.clientY;});
+  addEventListener('pointermove',e=>{if(!R3.drag)return;R3.rot.y+=(e.clientX-R3.lx)*0.008;R3.rot.x+=(e.clientY-R3.ly)*0.008;R3.rot.x=Math.max(-1.4,Math.min(1.4,R3.rot.x));R3.lx=e.clientX;R3.ly=e.clientY;});
+  addEventListener('pointerup',()=>R3.drag=false);
+  cv.addEventListener('wheel',e=>{e.preventDefault();R3.dist=Math.max(5,Math.min(16,R3.dist+e.deltaY*0.01));},{passive:false});
+  addEventListener('resize',rs);
+}
+function windingMesh(N,angStart,angEnd,color,R,r){
+  // winding occupies an arc of the torus from angStart..angEnd
+  const so=r+0.12;
+  class Hx extends THREE.Curve{getPoint(t){const th=angStart+(angEnd-angStart)*t;const ph=N*Math.PI*2*t;
+    return new THREE.Vector3((R+so*Math.cos(ph))*Math.cos(th),(R+so*Math.cos(ph))*Math.sin(th),so*Math.sin(ph));}}
+  const wr=Math.min(0.16,Math.max(0.04,(angEnd-angStart)*R/Math.max(N,1)*0.3));
+  return new THREE.Mesh(new THREE.TubeGeometry(new Hx(),Math.max(120,N*16),wr,8,false),
+    new THREE.MeshStandardMaterial({color,roughness:0.3,metalness:0.85,emissive:color,emissiveIntensity:0.15}));
+}
+function build3d(){
+  if(!R3)return;while(R3.grp.children.length)R3.grp.remove(R3.grp.children[0]);
+  const R=2.6,r=0.8;
+  R3.coreMat=new THREE.MeshStandardMaterial({color:0x2b3340,roughness:0.5,metalness:0.4,emissive:0x101820,emissiveIntensity:0.3});
+  R3.grp.add(new THREE.Mesh(new THREE.TorusGeometry(R,r,22,80),R3.coreMat));
+  // primary on left arc, secondary on right arc, visually scaled turns
+  const pN=Math.max(4,Math.min(30,Math.round(ST.Np/12)));
+  const sN=Math.max(4,Math.min(30,Math.round(ST.Ns/12)));
+  R3.grp.add(windingMesh(pN, Math.PI*0.55, Math.PI*1.45, 0x5ed6ff, R, r)); // primary (left)
+  R3.grp.add(windingMesh(sN, -Math.PI*0.45, Math.PI*0.45, 0xffb454, R, r)); // secondary (right)
+}
+function render3d(){
+  if(!R3)return;if(!R3.drag)R3.rot.y+=0.004;R3.grp.rotation.x=R3.rot.x;R3.grp.rotation.y=R3.rot.y;
+  // core glows with flux; reddens when saturating
+  const sat=satFrac();
+  if(R3.coreMat){const pulse=PWR.on?(0.5+0.5*Math.sin(PWR.t*ST.f*0.05)):0;
+    const base=Math.min(1,sat);
+    R3.coreMat.emissive.setRGB(0.1+base*0.7, 0.12*(1-base*0.5)+pulse*0.1*(1-base), 0.3*(1-base*0.7)+pulse*0.2*(1-base));
+    R3.coreMat.emissiveIntensity=0.3+ (PWR.on?0.5:0) + base*0.6;}
+  R3.cam.position.set(0,0,R3.dist);R3.cam.lookAt(0,0,0);R3.r.render(R3.sc,R3.cam);
+}
+
+/* ---------- ui ---------- */
+function sync(){
+  $("#v-np").textContent=ST.Np;$("#v-ns").textContent=ST.Ns;$("#v-vp").textContent=ST.Vp+" V";
+  $("#v-f").textContent=ST.f>=1000?(ST.f/1000).toFixed(ST.f%1000?1:0)+" kHz":ST.f+" Hz";
+  $("#v-rl").textContent=ST.Rl+" Ω";$("#r-np").textContent=ST.Np;$("#r-ns").textContent=ST.Ns;
+  const n=ratio();
+  $("#ratio-desc").textContent = n>1?`step-up ×${n.toFixed(2)}`:n<1?`step-down ×${(1/n).toFixed(2)}`:"isolation 1:1";
+  $("#o-n").textContent=n.toFixed(3);
+  $("#o-vs").textContent=`${ST.Vp}V → ${Vs().toFixed(2)}V`;
+  $("#o-is").textContent=(Is()*1000).toFixed(0)+" mA";
+  $("#o-ip").textContent=(Ip()*1000).toFixed(0)+" mA";
+  const bp=Bpeak(),c=core(),sat=bp/c.Bsat;
+  const bi=$("#o-b");bi.textContent=(bp<c.Bsat?bp.toFixed(3):c.Bsat.toFixed(2)+"⚠")+" T";bi.className="v "+(sat>0.95?"sat":sat>0.6?"warn":"ok");
+  $("#o-p").textContent=(Vs()*Is()).toFixed(2)+" W";
+  const v=$("#o-v");
+  if(sat>0.98){v.className="verdict sat";v.textContent=`⚠ CORE SATURATED — B demand ${bp.toFixed(2)}T exceeds B_sat ${c.Bsat}T. Flux clips, Vs distorts (flat-top), transfer fails. Fix: more primary turns or higher frequency.`;}
+  else if(sat>0.7){v.className="verdict warn";v.textContent=`~ Flux at ${(sat*100).toFixed(0)}% of B_sat — nearing saturation. Add turns or raise frequency for margin.`;}
+  else{v.className="verdict ok";v.textContent=`✓ ${n>1?"Step-up":n<1?"Step-down":"Isolation"} ×${(n>1?n:1/n).toFixed(2)}. Clean transfer: ${ST.Vp}V→${Vs().toFixed(1)}V, flux ${(sat*100).toFixed(0)}% of B_sat. Power ${(Vs()*Is()).toFixed(2)}W.`;}
+  const ps=$("#pstate");
+  if(PWR.on){ps.className="pstate "+(sat>0.98?"sat":"live");ps.textContent=sat>0.98?"● live · SATURATED":"● live";}
+  else{ps.className="pstate";ps.textContent="○ idle";}
+  build3d();drawWave();drawFlux();drawPower();
+}
+function populate(){const sel=$("#s-core");Object.keys(CORES).forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o);});
+  sel.value=coreName;sel.onchange=()=>{coreName=sel.value;sync();};}
+$("#s-np").oninput=e=>{ST.Np=+e.target.value;sync();};
+$("#s-ns").oninput=e=>{ST.Ns=+e.target.value;sync();};
+$("#s-vp").oninput=e=>{ST.Vp=+e.target.value;sync();};
+$("#s-f").oninput=e=>{ST.f=+e.target.value;sync();};
+$("#s-rl").oninput=e=>{ST.Rl=+e.target.value;sync();};
+$("#pbtn").onclick=()=>{PWR.on=!PWR.on;PWR.t=0;
+  $("#pbtn").textContent=PWR.on?"⏻ power off":"⏻ energize";$("#pbtn").classList.toggle("on",PWR.on);sync();};
+
+/* boot */
+populate();if(window.THREE)init3d();sync();
+let last=performance.now();
+function loop(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(PWR.on){PWR.t+=dt*0.0004;drawWave();drawFlux();drawPower();}  // slow-mo so AC waveforms scroll visibly
+  render3d();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
