@@ -37,10 +37,12 @@ T = [
  ("The scaling era",2020,2020.1,"Scaling Laws","Kaplan et al. (OpenAI)","loss falls as a power law in params/data/compute — the thesis that bigger works","https://arxiv.org/abs/2001.08361",True),
  ("The scaling era",2020,2020.5,"GPT-3","Brown et al. (OpenAI)","175B params; in-context / few-shot learning — scale becomes capability","https://arxiv.org/abs/2005.14165",True),
  ("The scaling era",2021,2021.4,"RoPE (Rotary Position Embedding)","Su et al.","relative position by rotating Q/K — the positional encoding of most modern LLMs","https://arxiv.org/abs/2104.09864",True),
+ ("The scaling era",2021,2021.96,"PySvelte","Anthropic","lineage data ⬡ the org's first public repo (Dec 2021) — a Python↔Svelte bridge for interpretability visualizations, shipping AttentionMulti: attention weights rendered as a readable map. Tooling for looking in.","https://github.com/anthropics/PySvelte",False),
  ("The scaling era",2022,2022.1,"Chain-of-Thought prompting","Wei et al. (Google)","make the model show intermediate reasoning steps; complex reasoning jumps","https://arxiv.org/abs/2201.11903",False),
  ("The scaling era",2022,2022.3,"InstructGPT · RLHF","Ouyang et al. (OpenAI)","alignment by human feedback — a 1.3B model preferred over 175B GPT-3","https://arxiv.org/abs/2203.02155",True),
  ("The scaling era",2022,2022.31,"Chinchilla · compute-optimal scaling","Hoffmann et al. (DeepMind)","for a compute budget, train a smaller model on more data — corrects Kaplan","https://arxiv.org/abs/2203.15556",False),
  ("The scaling era",2022,2022.5,"FlashAttention","Dao et al.","IO-aware exact attention — big speed/memory wins that made long context affordable","https://arxiv.org/abs/2205.14135",True),
+ ("The scaling era",2022,2022.71,"Toy Models of Superposition","Anthropic","lineage data ⬡ how a network packs MORE features than it has neurons by overlaying them — the grammar of how meaning is encoded in the weights, and the precursor to Towards Monosemanticity.","https://transformer-circuits.pub/2022/toy_model/",False),
  ("The scaling era",2022,2022.92,"ChatGPT launches","OpenAI","productized RLHF chat (Nov 30) — the consumer inflection point","https://en.wikipedia.org/wiki/ChatGPT",False),
  ("The frontier",2023,2023.2,"LLaMA","Touvron et al. (Meta)","efficient open-weight models — 13B rivals GPT-3 175B; the open-LLM wave","https://arxiv.org/abs/2302.13971",True),
  ("The frontier",2023,2023.3,"GPT-4","OpenAI","a large multimodal model — human-level on many professional exams","https://arxiv.org/abs/2303.08774",False),
@@ -80,7 +82,7 @@ def cracks_html():
 
 PAGE = """<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="TTU1 · Exhibit 5 — THE LINEAGE. A verified, web-checked timeline of the ideas behind the transformer, ranked by year introduced (1943→2024). The audit-fill for the mini-corpus: the biggest crack was dating attention to 2017 — it was actually 2014 (Bahdanau). 35 ideas, each with the paper + a source link.">
+<meta name="description" content="TTU1 · Exhibit 5 — THE LINEAGE. A verified, web-checked timeline of the ideas behind the transformer, ranked by year introduced (1943→2024). The audit-fill for the mini-corpus: the biggest crack was dating attention to 2017 — it was actually 2014 (Bahdanau). 37 ideas, each with the paper + a source link.">
 <title>The Lineage · ideas by year · TTU1 · UD0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -119,7 +121,7 @@ footer{margin-top:42px;padding-top:20px;border-top:1px solid var(--line);text-al
     <div class="eye"><a href="index.html">← TTU1 · Transformer Tech Universe</a> · exhibit 5 · the audit-fill</div>
     <h1>The <b>Lineage</b></h1>
     <div class="h-sub">the ideas behind the transformer · ranked by year introduced · 1943 → 2024 · verified online</div>
-    <p class="lede">An audit of this universe's mini-corpus turned up an honest crack — it told the story as if attention began in 2017. It didn't. This is the corrected, web-checked lineage: <b>35 ideas in order of the year they were introduced</b>, each with the paper and a source link. The cracks are named first; the timeline fills them.</p>
+    <p class="lede">An audit of this universe's mini-corpus turned up an honest crack — it told the story as if attention began in 2017. It didn't. This is the corrected, web-checked lineage: <b>37 ideas in order of the year they were introduced</b>, each with the paper and a source link. The cracks are named first; the timeline fills them. Two ⬡ entries (PySvelte 2021, Toy Models of Superposition 2022) are <b>lineage data</b> folded in from Anthropic's early public git.</p>
   </header>
 
   <section class="audit"><h2>The Audit — cracks found &amp; filled</h2><p class="ass">what was missing or mis-dated in the mini-corpus, and how it's fixed</p>__CRACKS__</section>
